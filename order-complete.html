@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>訂單確認 — 布落之處</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .complete-main { padding: 80px 0 120px; min-height: calc(100vh - var(--header-h)); }
+    .complete-wrap { max-width: 640px; margin: 0 auto; }
+
+    .complete-icon {
+      width: 64px; height: 64px;
+      border: 1px solid var(--c-border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 32px;
+      color: #4CAF50;
+    }
+    .complete-title {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 300;
+      letter-spacing: -0.04em;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+    .complete-subtitle {
+      text-align: center;
+      color: var(--c-text-2);
+      font-size: 15px;
+      margin-bottom: 48px;
+      line-height: 1.7;
+    }
+
+    /* Order Card */
+    .order-card { border: 1px solid var(--c-border); }
+    .order-card__header {
+      padding: 24px 28px;
+      border-bottom: 1px solid var(--c-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .order-number { font-size: 13px; color: var(--c-text-3); }
+    .order-number strong { font-size: 16px; font-weight: 500; color: var(--c-text); display: block; margin-top: 2px; letter-spacing: 0.04em; }
+    .order-status-badge {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 14px;
+    }
+    .status-paid    { background: #E8F5E9; color: #2E7D32; }
+    .status-pending { background: #FFF3E0; color: #E65100; }
+
+    .order-card__body { padding: 28px; }
+    .order-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 28px; }
+    .order-info-item {}
+    .order-info-label { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--c-text-3); margin-bottom: 6px; }
+    .order-info-value { font-size: 14px; color: var(--c-text); line-height: 1.5; }
+
+    .order-items-title { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--c-text-3); margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid var(--c-border-lt); }
+    .order-item { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid var(--c-border-lt); }
+    .order-item:last-child { border-bottom: none; }
+    .order-item__img { width: 56px; height: 56px; object-fit: cover; background: var(--c-bg-warm); flex-shrink: 0; }
+    .order-item__info { flex: 1; }
+    .order-item__name { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+    .order-item__meta { font-size: 12px; color: var(--c-text-3); }
+    .order-item__subtotal { font-size: 14px; font-weight: 500; flex-shrink: 0; }
+
+    .order-totals { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--c-border); }
+    .total-row { display: flex; justify-content: space-between; font-size: 13px; padding: 4px 0; }
+    .total-row--final { font-size: 16px; font-weight: 600; margin-top: 8px; padding-top: 12px; border-top: 1px solid var(--c-border); }
+
+    .complete-actions { margin-top: 40px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+    /* Loading */
+    .loading-state { text-align: center; padding: 60px 0; color: var(--c-text-3); font-size: 14px; }
+
+    @media (max-width: 600px) {
+      .order-info-grid { grid-template-columns: 1fr; gap: 16px; }
+      .order-card__header { flex-direction: column; align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header" id="siteHeader">
+    <div class="header-container">
+      <button class="menu-btn" id="menuBtn" aria-label="開啟選單" aria-expanded="false">
+        <span class="menu-btn__bar"></span>
+        <span class="menu-btn__bar"></span>
+        <span class="menu-btn__bar"></span>
+      </button>
+      <a href="index.html" class="site-logo">
+        <img src="images/logo.png" alt="布落之處" class="site-logo__img" onerror="this.style.display='none'">
+        <span class="site-logo__text">布落之處</span>
+      </a>
+      <nav class="site-nav">
+        <a href="index.html" class="site-nav__link">首頁</a>
+        <a href="shop.html" class="site-nav__link">商品</a>
+      </nav>
+      <div class="header-actions">
+        <a href="cart.html" class="icon-btn" aria-label="購物車">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main class="complete-main">
+    <div class="container">
+      <div class="complete-wrap" id="pageContent">
+        <div class="loading-state">載入訂單資料中…</div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer" style="margin-top:0">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2024 布落之處. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:3001' : '';
+    const params = new URLSearchParams(window.location.search);
+    const orderNumber = params.get('order');
+
+    function fmt(n) { return 'NT$ ' + Number(n).toLocaleString('zh-TW'); }
+
+    function paymentMethodLabel(m) {
+      const map = { mock_credit: '信用卡付款', mock_atm: 'ATM 轉帳', cod: '貨到付款' };
+      return map[m] || m;
+    }
+
+    function statusBadge(payStatus) {
+      if (payStatus === '已付款') return `<span class="order-status-badge status-paid">已付款</span>`;
+      return `<span class="order-status-badge status-pending">待付款</span>`;
+    }
+
+    async function loadOrder() {
+      const wrap = document.getElementById('pageContent');
+      if (!orderNumber) {
+        wrap.innerHTML = '<p style="text-align:center;color:var(--c-text-2)">找不到訂單編號，請確認網址是否正確。</p>';
+        return;
+      }
+
+      try {
+        const res  = await fetch(`${API_BASE}/api/orders/${orderNumber}`);
+        const data = await res.json();
+        if (!data.success) throw new Error(data.message);
+        const o = data.data;
+
+        const isCOD = o.payment_method === 'cod';
+
+        let itemsHtml = '';
+        o.items.forEach(item => {
+          /* 嘗試從本地 PRODUCTS 取圖 */
+          const localP = typeof PRODUCTS !== 'undefined' ? PRODUCTS.find(p => p.id === item.product_id) : null;
+          const img = localP ? localP.images[0] : 'https://picsum.photos/seed/order/80/80';
+          itemsHtml += `
+            <div class="order-item">
+              <img class="order-item__img" src="${img}" alt="${item.name}" loading="lazy">
+              <div class="order-item__info">
+                <p class="order-item__name">${item.name}</p>
+                <p class="order-item__meta">${item.category} &nbsp;×&nbsp; ${item.quantity}</p>
+              </div>
+              <span class="order-item__subtotal">${fmt(item.price * item.quantity)}</span>
+            </div>
+          `;
+        });
+
+        document.title = `訂單 ${o.order_number} — 布落之處`;
+
+        wrap.innerHTML = `
+          <div class="complete-icon">
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <h1 class="complete-title">${isCOD ? '訂單已建立' : '感謝您的訂購！'}</h1>
+          <p class="complete-subtitle">
+            ${isCOD
+              ? '您選擇貨到付款，我們將盡快為您備貨出貨，收貨時請以現金付款。'
+              : '付款已確認，我們將開始為您備貨，訂單確認信已發送至您的信箱。'}
+          </p>
+
+          <div class="order-card">
+            <div class="order-card__header">
+              <div class="order-number">
+                訂單編號
+                <strong>${o.order_number}</strong>
+              </div>
+              ${statusBadge(o.payment_status)}
+            </div>
+            <div class="order-card__body">
+              <div class="order-info-grid">
+                <div class="order-info-item">
+                  <p class="order-info-label">收件人</p>
+                  <p class="order-info-value">${o.customer_name}</p>
+                </div>
+                <div class="order-info-item">
+                  <p class="order-info-label">聯絡電話</p>
+                  <p class="order-info-value">${o.customer_phone}</p>
+                </div>
+                <div class="order-info-item">
+                  <p class="order-info-label">電子信箱</p>
+                  <p class="order-info-value">${o.customer_email}</p>
+                </div>
+                <div class="order-info-item">
+                  <p class="order-info-label">付款方式</p>
+                  <p class="order-info-value">${paymentMethodLabel(o.payment_method)}</p>
+                </div>
+                <div class="order-info-item" style="grid-column:1/-1">
+                  <p class="order-info-label">收件地址</p>
+                  <p class="order-info-value">${o.customer_address}</p>
+                </div>
+                ${o.notes ? `<div class="order-info-item" style="grid-column:1/-1"><p class="order-info-label">備註</p><p class="order-info-value">${o.notes}</p></div>` : ''}
+              </div>
+
+              <p class="order-items-title">訂購商品</p>
+              ${itemsHtml}
+
+              <div class="order-totals">
+                <div class="total-row"><span>商品小計</span><span>${fmt(o.subtotal)}</span></div>
+                <div class="total-row"><span>運費</span><span>${o.shipping_fee === 0 ? '免費' : fmt(o.shipping_fee)}</span></div>
+                <div class="total-row total-row--final"><span>總計</span><span>${fmt(o.total)}</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="complete-actions">
+            <a href="shop.html" class="btn btn--outline">繼續購物</a>
+            <a href="index.html" class="btn btn--primary">回到首頁</a>
+          </div>
+        `;
+
+      } catch (err) {
+        wrap.innerHTML = `
+          <p style="text-align:center;color:var(--c-text-2);margin-bottom:24px">
+            無法載入訂單資料：${err.message}<br>
+            <small>請確認後端服務是否已啟動（http://localhost:3001）</small>
+          </p>
+          <div style="text-align:center"><a href="index.html" class="btn btn--primary">回到首頁</a></div>
+        `;
+      }
+    }
+
+    loadOrder();
+  </script>
+</body>
+</html>

@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>客戶資料 — 布落之處後台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <p class="sidebar-brand__name">布落之處</p>
+      <p class="sidebar-brand__sub">Admin</p>
+    </div>
+    <nav class="sidebar-nav">
+      <p class="nav-section-label">管理</p>
+      <a href="orders.html" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        訂單管理
+      </a>
+      <a href="products.html" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        商品管理
+      </a>
+      <a href="customers.html" class="nav-link active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        客戶資料
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" id="logoutBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        登出
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="開啟選單">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+        <span class="topbar-title">客戶資料</span>
+      </div>
+      <div class="topbar-actions">
+        <span id="customerCount" style="font-size:12px;color:#999"></span>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-title">所有客戶</span>
+          <span style="font-size:12px;color:#999">依最後訂購時間排序</span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>客戶姓名</th>
+                <th>電子信箱</th>
+                <th>電話</th>
+                <th>訂單數</th>
+                <th>總消費</th>
+                <th>最後訂購</th>
+              </tr>
+            </thead>
+            <tbody id="customersTableBody">
+              <tr class="loading-row"><td colspan="6">載入中…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<script src="admin.js"></script>
+<script>
+  requireAuth();
+
+  async function loadCustomers() {
+    const data = await adminFetch('/api/admin/customers');
+    if (!data?.success) return;
+
+    document.getElementById('customerCount').textContent = `共 ${data.data.length} 位客戶`;
+
+    const tbody = document.getElementById('customersTableBody');
+    if (data.data.length === 0) {
+      tbody.innerHTML = '<tr class="loading-row"><td colspan="6">目前尚無客戶資料，待有訂單後即會顯示。</td></tr>';
+      return;
+    }
+
+    tbody.innerHTML = data.data.map(c => `
+      <tr>
+        <td><span style="font-weight:500">${c.name}</span></td>
+        <td><a href="mailto:${c.email}" style="color:#686868">${c.email}</a></td>
+        <td>${c.phone}</td>
+        <td>${c.order_count} 筆</td>
+        <td>${fmt(c.total_spent)}</td>
+        <td style="font-size:12px;color:#999">${formatDate(c.last_order_at)}</td>
+      </tr>
+    `).join('');
+  }
+
+  loadCustomers();
+</script>
+</body>
+</html>

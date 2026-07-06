@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="布落之處 — 商品詳情">
+  <title>商品詳情 — 布落之處</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header" id="siteHeader">
+    <div class="header-container">
+      <button class="menu-btn" id="menuBtn" aria-label="開啟選單" aria-expanded="false">
+        <span class="menu-btn__bar"></span>
+        <span class="menu-btn__bar"></span>
+        <span class="menu-btn__bar"></span>
+      </button>
+
+      <a href="index.html" class="site-logo">
+        <img src="images/logo.png" alt="布落之處" class="site-logo__img" onerror="this.style.display='none'">
+        <span class="site-logo__text">布落之處</span>
+      </a>
+
+      <nav class="site-nav">
+        <a href="index.html" class="site-nav__link">首頁</a>
+        <a href="shop.html" class="site-nav__link is-active">商品</a>
+        <a href="index.html#editorial" class="site-nav__link">關於</a>
+        <a href="index.html#newsletter" class="site-nav__link">聯絡</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-btn" id="searchBtn" aria-label="搜尋">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </button>
+        <a href="cart.html" class="icon-btn cart-icon" aria-label="購物車">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span class="cart-count is-hidden" id="cartCount">0</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="search-overlay" id="searchOverlay">
+      <div class="search-overlay__inner">
+        <input type="search" class="search-input" id="searchInput" placeholder="搜尋商品、分類或關鍵字…" autocomplete="off">
+        <button class="search-close-btn" id="searchCloseBtn" aria-label="關閉搜尋">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="mobile-menu" id="mobileMenu">
+      <nav class="mobile-menu__nav">
+        <a href="index.html" class="mobile-menu__link">首頁</a>
+        <a href="shop.html" class="mobile-menu__link">商品</a>
+        <a href="index.html#editorial" class="mobile-menu__link">關於</a>
+        <a href="index.html#newsletter" class="mobile-menu__link">聯絡</a>
+      </nav>
+      <div class="mobile-menu__footer">
+        <a href="cart.html" class="mobile-menu__link">購物車</a>
+      </div>
+    </div>
+    <div class="menu-overlay" id="menuOverlay"></div>
+  </header>
+
+  <!-- ===== MAIN ===== -->
+  <main>
+    <div class="container">
+
+      <!-- 麵包屑導覽 -->
+      <nav class="breadcrumb" aria-label="頁面路徑">
+        <a href="index.html">首頁</a>
+        <span>/</span>
+        <a href="shop.html">商品</a>
+        <span>/</span>
+        <span id="productBreadcrumb">載入中…</span>
+      </nav>
+
+      <!-- 商品主體 -->
+      <div class="product-layout">
+
+        <!-- 左側：圖片畫廊 -->
+        <div class="product-gallery">
+          <div class="gallery-main">
+            <img id="mainProductImage" src="" alt="商品圖片" class="gallery-main__img">
+          </div>
+          <div class="gallery-thumbs" id="galleryThumbs">
+            <!-- 由 script.js 動態渲染 -->
+          </div>
+        </div>
+
+        <!-- 右側：商品資訊 -->
+        <div class="product-info">
+          <span class="product-card__cat" id="productCategory">分類</span>
+          <h1 class="product-name" id="productName">載入中…</h1>
+
+          <div class="product-price-wrap">
+            <span class="product-price" id="productPrice"></span>
+          </div>
+
+          <div class="product-stock" id="productStock"></div>
+
+          <!-- 數量選擇 -->
+          <div class="product-quantity">
+            <button class="qty-btn" id="qtyMinus" aria-label="減少數量">−</button>
+            <input type="number" class="qty-input" id="qtyInput" value="1" min="1" max="99" aria-label="數量">
+            <button class="qty-btn" id="qtyPlus" aria-label="增加數量">+</button>
+          </div>
+
+          <!-- 加入購物車 -->
+          <div class="product-actions">
+            <button class="btn btn--primary btn--large btn--full" id="addToCartBtn">加入購物車</button>
+          </div>
+
+          <hr class="product-divider">
+
+          <!-- 商品描述 -->
+          <p class="product-desc-title">商品說明</p>
+          <div class="product-desc" id="productDesc">
+            <!-- 由 script.js 填入 -->
+          </div>
+
+          <hr class="product-divider">
+
+          <!-- 規格表格 -->
+          <div class="product-specs">
+            <p class="product-desc-title">商品規格</p>
+            <table class="specs-table">
+              <tbody id="specsTable">
+                <!-- 由 script.js 填入 -->
+              </tbody>
+            </table>
+          </div>
+        </div><!-- /product-info -->
+
+      </div><!-- /product-layout -->
+
+      <!-- 相關商品 -->
+      <section class="related-products">
+        <div class="section-header">
+          <div>
+            <span class="section-label">同分類商品</span>
+            <h2 class="section-title">您可能也喜歡</h2>
+          </div>
+          <a href="shop.html" class="section-link">查看全部 →</a>
+        </div>
+        <div class="products-grid" id="relatedProductsGrid">
+          <!-- 由 script.js 動態渲染 -->
+        </div>
+      </section>
+
+    </div><!-- /container -->
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="site-logo">
+            <span class="site-logo__text">布落之處</span>
+          </a>
+          <p class="footer-brand__desc">精選紡織零件，為每一位工藝職人提供最可靠的專業工具。</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Instagram">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Facebook">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col__title">商品分類</h4>
+          <ul class="footer-links">
+            <li><a href="shop.html?category=%E7%B8%AB%E7%B4%9D%E6%A9%9F%E9%9B%B6%E4%BB%B6">縫紉機零件</a></li>
+            <li><a href="shop.html?category=%E9%87%9D%E5%85%B7">針具</a></li>
+            <li><a href="shop.html?category=%E5%A3%93%E5%B8%83%E8%85%B3">壓布腳</a></li>
+            <li><a href="shop.html?category=%E7%B7%9A%E6%9D%90">線材</a></li>
+            <li><a href="shop.html?category=%E5%85%B6%E4%BB%96%E9%85%8D%E4%BB%B6">其他配件</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col__title">客戶服務</h4>
+          <ul class="footer-links">
+            <li><a href="#">常見問題</a></li>
+            <li><a href="#">退換貨政策</a></li>
+            <li><a href="#">運送說明</a></li>
+            <li><a href="#">隱私政策</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4 class="footer-col__title">聯絡我們</h4>
+          <ul class="footer-contact">
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+              </svg>
+              service@buluo.tw
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              週一至週五 10:00–18:00
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 布落之處. All rights reserved.</p>
+        <div class="footer-bottom__links">
+          <a href="#">隱私政策</a>
+          <a href="#">使用條款</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

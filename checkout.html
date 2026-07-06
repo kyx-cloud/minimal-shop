@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>結帳 — 布落之處</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* ── Checkout 頁面專屬樣式 ── */
+    .checkout-main { padding-bottom: 100px; }
+
+    .checkout-layout {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 64px;
+      align-items: start;
+    }
+
+    /* Steps */
+    .checkout-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 40px 0 48px;
+    }
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--c-text-3);
+    }
+    .step__num {
+      width: 24px; height: 24px;
+      border: 1px solid var(--c-border);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+    }
+    .step.is-active { color: var(--c-text); }
+    .step.is-active .step__num { background: var(--c-text); color: #fff; border-color: var(--c-text); }
+    .step-divider { flex: 1; height: 1px; background: var(--c-border); margin: 0 16px; }
+
+    /* Form */
+    .checkout-form-section { margin-bottom: 40px; }
+    .form-section-title {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--c-text-3);
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--c-border-lt);
+    }
+    .form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .form-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-label { font-size: 12px; font-weight: 500; letter-spacing: 0.04em; color: var(--c-text-2); }
+    .form-input {
+      border: 1px solid var(--c-border);
+      padding: 12px 14px;
+      font-size: 14px;
+      outline: none;
+      background: transparent;
+      transition: border-color 0.2s ease;
+      -webkit-appearance: none;
+    }
+    .form-input:focus { border-color: var(--c-text); }
+    .form-input.is-error { border-color: #E53E3E; }
+    .form-error { font-size: 11px; color: #E53E3E; margin-top: 4px; }
+    .form-input::placeholder { color: var(--c-text-3); }
+
+    /* Payment Methods */
+    .payment-options { display: flex; flex-direction: column; gap: 10px; }
+    .payment-option {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 20px;
+      border: 1px solid var(--c-border);
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+    }
+    .payment-option:hover { border-color: #aaa; }
+    .payment-option input[type="radio"] { margin-top: 2px; accent-color: var(--c-text); flex-shrink: 0; }
+    .payment-option.is-selected { border-color: var(--c-text); }
+    .payment-option__name { font-size: 14px; font-weight: 500; margin-bottom: 3px; }
+    .payment-option__desc { font-size: 12px; color: var(--c-text-3); }
+    .payment-badge {
+      margin-left: auto;
+      font-size: 10px;
+      padding: 3px 8px;
+      background: var(--c-bg-warm);
+      color: var(--c-text-2);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      flex-shrink: 0;
+    }
+
+    /* Mock card form */
+    .card-form {
+      margin-top: 16px;
+      padding: 20px;
+      background: var(--c-bg-warm);
+      display: none;
+    }
+    .card-form.is-visible { display: block; }
+    .card-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* Order Summary (right column) */
+    .order-summary {
+      background: var(--c-bg-warm);
+      padding: 32px;
+      position: sticky;
+      top: calc(var(--header-h) + 24px);
+    }
+    .order-summary__title {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      color: var(--c-text-2);
+    }
+    .summary-items { margin-bottom: 24px; }
+    .summary-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--c-border-lt);
+    }
+    .summary-item__img { width: 56px; height: 56px; object-fit: cover; background: #fff; flex-shrink: 0; }
+    .summary-item__info { flex: 1; }
+    .summary-item__name { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+    .summary-item__cat { font-size: 11px; color: var(--c-text-3); }
+    .summary-item__qty { font-size: 12px; color: var(--c-text-3); }
+    .summary-item__price { font-size: 13px; font-weight: 500; flex-shrink: 0; }
+    .summary-divider { height: 1px; background: var(--c-border); margin: 16px 0; }
+    .summary-row {
+      display: flex; justify-content: space-between; align-items: center;
+      font-size: 13px; padding: 6px 0;
+    }
+    .summary-row span:last-child { font-weight: 500; }
+    .summary-row--total {
+      font-size: 16px; font-weight: 600;
+      border-top: 1px solid var(--c-border);
+      padding-top: 16px; margin-top: 8px;
+    }
+    .summary-row--free { color: #4CAF50; font-size: 12px; }
+
+    .checkout-submit { margin-top: 24px; }
+    .checkout-submit .btn--primary { width: 100%; font-size: 14px; padding: 18px; }
+    .checkout-note { font-size: 11px; color: var(--c-text-3); margin-top: 12px; text-align: center; line-height: 1.6; }
+
+    /* Loading state */
+    .btn--loading { pointer-events: none; opacity: 0.7; }
+
+    @media (max-width: 900px) {
+      .checkout-layout { grid-template-columns: 1fr; }
+      .order-summary { position: static; order: -1; margin-bottom: 32px; }
+      .form-grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header" id="siteHeader">
+    <div class="header-container">
+      <button class="menu-btn" id="menuBtn" aria-label="開啟選單" aria-expanded="false">
+        <span class="menu-btn__bar"></span>
+        <span class="menu-btn__bar"></span>
+        <span class="menu-btn__bar"></span>
+      </button>
+      <a href="index.html" class="site-logo">
+        <img src="images/logo.png" alt="布落之處" class="site-logo__img" onerror="this.style.display='none'">
+        <span class="site-logo__text">布落之處</span>
+      </a>
+      <nav class="site-nav">
+        <a href="index.html" class="site-nav__link">首頁</a>
+        <a href="shop.html" class="site-nav__link">商品</a>
+        <a href="index.html#editorial" class="site-nav__link">關於</a>
+        <a href="index.html#newsletter" class="site-nav__link">聯絡</a>
+      </nav>
+      <div class="header-actions">
+        <a href="cart.html" class="icon-btn cart-icon" aria-label="購物車">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span class="cart-count is-hidden" id="cartCount">0</span>
+        </a>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <nav class="mobile-menu__nav">
+        <a href="index.html" class="mobile-menu__link">首頁</a>
+        <a href="shop.html" class="mobile-menu__link">商品</a>
+      </nav>
+    </div>
+    <div class="menu-overlay" id="menuOverlay"></div>
+  </header>
+
+  <main class="checkout-main">
+    <div class="container">
+
+      <h1 class="page-title">結帳</h1>
+
+      <!-- 步驟指示 -->
+      <div class="checkout-steps">
+        <div class="step is-active"><span class="step__num">1</span>填寫資料</div>
+        <div class="step-divider"></div>
+        <div class="step"><span class="step__num">2</span>付款</div>
+        <div class="step-divider"></div>
+        <div class="step"><span class="step__num">3</span>完成</div>
+      </div>
+
+      <div class="checkout-layout">
+
+        <!-- 左側：表單 -->
+        <div class="checkout-form-wrap">
+          <form id="checkoutForm" novalidate>
+
+            <!-- 收件人資料 -->
+            <div class="checkout-form-section">
+              <p class="form-section-title">收件人資料</p>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label class="form-label" for="customerName">姓名 <span style="color:#E53E3E">*</span></label>
+                  <input class="form-input" type="text" id="customerName" placeholder="王小明" required>
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="customerPhone">電話 <span style="color:#E53E3E">*</span></label>
+                  <input class="form-input" type="tel" id="customerPhone" placeholder="0912-345-678" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="customerEmail">電子信箱 <span style="color:#E53E3E">*</span></label>
+                <input class="form-input" type="email" id="customerEmail" placeholder="name@example.com" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="customerAddress">收件地址 <span style="color:#E53E3E">*</span></label>
+                <input class="form-input" type="text" id="customerAddress" placeholder="台北市信義區信義路五段7號" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="orderNotes">備註（選填）</label>
+                <input class="form-input" type="text" id="orderNotes" placeholder="如有特殊需求請填寫於此">
+              </div>
+            </div>
+
+            <!-- 付款方式 -->
+            <div class="checkout-form-section">
+              <p class="form-section-title">付款方式</p>
+              <div class="payment-options" id="paymentOptions">
+
+                <label class="payment-option is-selected">
+                  <input type="radio" name="payment" value="mock_credit" checked>
+                  <div>
+                    <p class="payment-option__name">信用卡付款</p>
+                    <p class="payment-option__desc">Visa / Mastercard / JCB</p>
+                  </div>
+                  <span class="payment-badge">模擬</span>
+                </label>
+
+                <label class="payment-option">
+                  <input type="radio" name="payment" value="mock_atm">
+                  <div>
+                    <p class="payment-option__name">ATM 轉帳</p>
+                    <p class="payment-option__desc">付款後系統自動確認</p>
+                  </div>
+                  <span class="payment-badge">模擬</span>
+                </label>
+
+                <label class="payment-option">
+                  <input type="radio" name="payment" value="cod">
+                  <div>
+                    <p class="payment-option__name">貨到付款</p>
+                    <p class="payment-option__desc">收貨時以現金付款，另加 NT$ 30 處理費</p>
+                  </div>
+                </label>
+
+              </div>
+
+              <!-- 模擬信用卡表單（純 UI，不傳送卡號） -->
+              <div class="card-form is-visible" id="cardForm">
+                <div class="form-group">
+                  <label class="form-label">持卡人姓名</label>
+                  <input class="form-input" type="text" placeholder="Name on Card" autocomplete="cc-name">
+                </div>
+                <div class="form-group">
+                  <label class="form-label">卡號</label>
+                  <input class="form-input" type="text" id="cardNumber" placeholder="**** **** **** ****" maxlength="19" autocomplete="cc-number">
+                </div>
+                <div class="card-row">
+                  <div class="form-group">
+                    <label class="form-label">有效期限</label>
+                    <input class="form-input" type="text" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">安全碼</label>
+                    <input class="form-input" type="text" placeholder="CVV" maxlength="3" autocomplete="cc-csc">
+                  </div>
+                </div>
+                <p style="font-size:11px;color:var(--c-text-3);margin-top:8px;">
+                  ⚠ 此為模擬付款，請勿輸入真實信用卡資料。
+                </p>
+              </div>
+            </div>
+
+            <!-- 全域錯誤訊息 -->
+            <div id="formError" style="display:none;color:#E53E3E;font-size:13px;padding:12px 16px;border:1px solid #E53E3E;margin-bottom:16px;"></div>
+
+          </form>
+        </div>
+
+        <!-- 右側：訂單摘要 -->
+        <div class="order-summary">
+          <p class="order-summary__title">訂單摘要</p>
+          <div class="summary-items" id="summaryItems">
+            <!-- 由 JS 填入 -->
+          </div>
+          <div class="summary-divider"></div>
+          <div class="summary-row"><span>商品小計</span><span id="summarySubtotal">NT$ 0</span></div>
+          <div class="summary-row"><span>運費</span><span id="summaryShipping">NT$ 80</span></div>
+          <div class="summary-row summary-row--free" id="freeShippingNote" style="display:none">
+            <span>✓ 訂單滿 NT$ 1,000 免運費</span>
+          </div>
+          <div class="summary-row summary-row--total"><span>總計</span><span id="summaryTotal">NT$ 0</span></div>
+          <div class="checkout-submit">
+            <button class="btn btn--primary" type="button" id="submitBtn">確認訂購並付款</button>
+          </div>
+          <p class="checkout-note">點擊付款即表示您同意本站服務條款。訂單建立後將發送確認信至您的信箱。</p>
+        </div>
+
+      </div><!-- /checkout-layout -->
+    </div><!-- /container -->
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    /* ── 結帳頁專屬邏輯 ── */
+    const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:3001' : '';
+    const SHIPPING_FEE = 80;
+    const FREE_THRESHOLD = 1000;
+
+    /* 讀取購物車 */
+    function getCartItems() {
+      try { return JSON.parse(localStorage.getItem('buluo_cart') || '[]'); } catch { return []; }
+    }
+
+    /* 取得商品資料（本地資料） */
+    function getProductById(id) {
+      return typeof PRODUCTS !== 'undefined' ? PRODUCTS.find(p => p.id === id) : null;
+    }
+
+    /* 渲染訂單摘要 */
+    function renderSummary() {
+      const items = getCartItems();
+      if (items.length === 0) { window.location.href = 'cart.html'; return; }
+
+      const container = document.getElementById('summaryItems');
+      let subtotal = 0;
+      container.innerHTML = '';
+
+      items.forEach(item => {
+        const p = getProductById(item.id);
+        if (!p) return;
+        const lineTotal = p.price * item.qty;
+        subtotal += lineTotal;
+        container.innerHTML += `
+          <div class="summary-item">
+            <img class="summary-item__img" src="${p.images[0]}" alt="${p.name}" loading="lazy">
+            <div class="summary-item__info">
+              <p class="summary-item__name">${p.name}</p>
+              <p class="summary-item__cat">${p.category}</p>
+              <p class="summary-item__qty">× ${item.qty}</p>
+            </div>
+            <span class="summary-item__price">NT$ ${lineTotal.toLocaleString('zh-TW')}</span>
+          </div>
+        `;
+      });
+
+      const shipping = subtotal >= FREE_THRESHOLD ? 0 : SHIPPING_FEE;
+      const total = subtotal + shipping;
+
+      document.getElementById('summarySubtotal').textContent = `NT$ ${subtotal.toLocaleString('zh-TW')}`;
+      document.getElementById('summaryShipping').textContent = shipping === 0 ? '免費' : `NT$ ${shipping}`;
+      document.getElementById('summaryTotal').textContent    = `NT$ ${total.toLocaleString('zh-TW')}`;
+      document.getElementById('freeShippingNote').style.display = subtotal >= FREE_THRESHOLD ? 'flex' : 'none';
+    }
+
+    /* 付款方式切換 */
+    document.querySelectorAll('.payment-option input').forEach(radio => {
+      radio.addEventListener('change', () => {
+        document.querySelectorAll('.payment-option').forEach(el => el.classList.remove('is-selected'));
+        radio.closest('.payment-option').classList.add('is-selected');
+        const cardForm = document.getElementById('cardForm');
+        cardForm.classList.toggle('is-visible', radio.value === 'mock_credit');
+      });
+    });
+
+    /* 信用卡號格式化 */
+    document.getElementById('cardNumber')?.addEventListener('input', (e) => {
+      let v = e.target.value.replace(/\D/g, '').slice(0, 16);
+      e.target.value = v.replace(/(.{4})/g, '$1 ').trim();
+    });
+
+    /* 表單驗證 */
+    function validate() {
+      const fields = [
+        { id: 'customerName',    label: '姓名' },
+        { id: 'customerPhone',   label: '電話' },
+        { id: 'customerEmail',   label: '電子信箱' },
+        { id: 'customerAddress', label: '收件地址' },
+      ];
+      for (const f of fields) {
+        const el = document.getElementById(f.id);
+        if (!el.value.trim()) {
+          el.classList.add('is-error');
+          el.focus();
+          return `請填寫${f.label}`;
+        }
+        el.classList.remove('is-error');
+      }
+      const email = document.getElementById('customerEmail').value;
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        document.getElementById('customerEmail').classList.add('is-error');
+        return '請輸入有效的電子信箱格式';
+      }
+      return null;
+    }
+
+    /* 顯示錯誤（置頂浮動，確保可見） */
+    function showError(msg) {
+      const el = document.getElementById('formError');
+      el.textContent = msg;
+      el.style.display = 'block';
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+    function hideError() {
+      document.getElementById('formError').style.display = 'none';
+    }
+
+    /* 送出訂單 */
+    document.getElementById('submitBtn').addEventListener('click', async () => {
+      hideError();
+
+      /* 1. 表單驗證 */
+      const errMsg = validate();
+      if (errMsg) { showError(errMsg); return; }
+
+      /* 2. 確認購物車非空 */
+      const items = getCartItems();
+      if (!items.length) { showError('購物車是空的，請先加入商品。'); return; }
+
+      /* 3. 組裝訂單商品（全部在 try 之前先做，確保 null 可被 catch） */
+      const btn = document.getElementById('submitBtn');
+      btn.textContent = '處理中…';
+      btn.disabled = true;
+
+      try {
+        const paymentMethod = document.querySelector('input[name="payment"]:checked')?.value || 'mock_credit';
+        const isCOD = paymentMethod === 'cod';
+
+        /* 組裝品項：id 可能是字串或數字，統一用 == 比對 */
+        const orderItems = items.map(item => {
+          const p = typeof PRODUCTS !== 'undefined'
+            ? PRODUCTS.find(pr => pr.id == item.id)
+            : null;
+          if (!p) throw new Error(`找不到商品（id=${item.id}），請重新整理後再試。`);
+          return {
+            product_id: p.id,
+            name:       p.name,
+            category:   p.category,
+            price:      p.price,
+            quantity:   item.qty,
+          };
+        });
+
+        /* 4. 建立訂單 */
+        const createRes = await fetch(`${API_BASE}/api/orders`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            customer: {
+              name:    document.getElementById('customerName').value.trim(),
+              email:   document.getElementById('customerEmail').value.trim(),
+              phone:   document.getElementById('customerPhone').value.trim(),
+              address: document.getElementById('customerAddress').value.trim(),
+            },
+            items: orderItems,
+            payment_method: paymentMethod,
+            notes: document.getElementById('orderNotes').value.trim() || null,
+          }),
+        });
+        if (!createRes.ok) throw new Error(`伺服器回應錯誤 (${createRes.status})，請確認後端服務已啟動。`);
+        const createData = await createRes.json();
+        if (!createData.success) throw new Error(createData.message);
+
+        const orderNumber = createData.data.order_number;
+
+        /* 5. 若非貨到付款，模擬付款成功 */
+        if (!isCOD) {
+          const payRes = await fetch(`${API_BASE}/api/orders/${orderNumber}/pay`, { method: 'POST' });
+          if (!payRes.ok) throw new Error('付款模擬失敗，請稍後再試。');
+          const payData = await payRes.json();
+          if (!payData.success) throw new Error(payData.message);
+        }
+
+        /* 6. 清除購物車，跳轉成功頁 */
+        localStorage.removeItem('buluo_cart');
+        window.location.href = `success.html?order=${orderNumber}`;
+
+      } catch (err) {
+        btn.textContent = '確認訂購並付款';
+        btn.disabled = false;
+        showError(err.message || '發生未知錯誤，請稍後再試。');
+      }
+    });
+
+    /* 初始化 */
+    renderSummary();
+    Cart.updateCountUI();
+  </script>
+</body>
+</html>

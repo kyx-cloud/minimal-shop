@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="布落之處 — 精選頂級紡織零件，縫紉機配件、針具、壓布腳、線材專門店">
+  <title>布落之處 — 精選紡織零件</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header" id="siteHeader">
+    <div class="header-container">
+      <button class="menu-btn" id="menuBtn" aria-label="開啟選單" aria-expanded="false">
+        <span class="menu-btn__bar"></span>
+        <span class="menu-btn__bar"></span>
+        <span class="menu-btn__bar"></span>
+      </button>
+
+      <a href="index.html" class="site-logo">
+        <img src="images/logo.png" alt="布落之處" class="site-logo__img" onerror="this.style.display='none'">
+        <span class="site-logo__text">布落之處</span>
+      </a>
+
+      <nav class="site-nav">
+        <a href="index.html" class="site-nav__link is-active">首頁</a>
+        <a href="shop.html" class="site-nav__link">商品</a>
+        <a href="#editorial" class="site-nav__link">關於</a>
+        <a href="#newsletter" class="site-nav__link">聯絡</a>
+      </nav>
+
+      <div class="header-actions">
+        <button class="icon-btn" id="searchBtn" aria-label="搜尋">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+          </svg>
+        </button>
+        <a href="cart.html" class="icon-btn cart-icon" aria-label="購物車">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span class="cart-count is-hidden" id="cartCount">0</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- 搜尋覆蓋層 -->
+    <div class="search-overlay" id="searchOverlay">
+      <div class="search-overlay__inner">
+        <input type="search" class="search-input" id="searchInput" placeholder="搜尋商品、分類或關鍵字…" autocomplete="off">
+        <button class="search-close-btn" id="searchCloseBtn" aria-label="關閉搜尋">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M18 6 6 18M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- 手機選單 -->
+    <div class="mobile-menu" id="mobileMenu">
+      <nav class="mobile-menu__nav">
+        <a href="index.html" class="mobile-menu__link">首頁</a>
+        <a href="shop.html" class="mobile-menu__link">商品</a>
+        <a href="#editorial" class="mobile-menu__link">關於</a>
+        <a href="#newsletter" class="mobile-menu__link">聯絡</a>
+      </nav>
+      <div class="mobile-menu__footer">
+        <a href="cart.html" class="mobile-menu__link">購物車</a>
+      </div>
+    </div>
+    <div class="menu-overlay" id="menuOverlay"></div>
+  </header>
+
+  <main>
+
+    <!-- ===== HERO ===== -->
+    <section class="hero">
+      <div class="hero__text">
+        <span class="hero__label">紡織工藝專門店</span>
+        <h1 class="hero__title">為每一針，<br>留下精準<br>的落點。</h1>
+        <p class="hero__desc">精選頂級紡織零件，從縫紉機配件到專業針具，為每一位工藝職人提供最可靠的工具。</p>
+        <div class="hero__actions">
+          <a href="shop.html" class="btn btn--primary">探索商品</a>
+          <a href="#editorial" class="btn btn--link">品牌故事 →</a>
+        </div>
+      </div>
+      <div class="hero__image">
+        <img src="images/hero1.jpg" alt="精選紡織零件" loading="eager">
+      </div>
+    </section>
+
+    <!-- ===== 跑馬燈 ===== -->
+    <div class="marquee" aria-hidden="true">
+      <div class="marquee__track">
+        <span>縫紉機零件</span><span>·</span>
+        <span>針具組合</span><span>·</span>
+        <span>壓布腳系列</span><span>·</span>
+        <span>精選線材</span><span>·</span>
+        <span>裁切工具</span><span>·</span>
+        <span>工藝配件</span><span>·</span>
+        <span>縫紉機零件</span><span>·</span>
+        <span>針具組合</span><span>·</span>
+        <span>壓布腳系列</span><span>·</span>
+        <span>精選線材</span><span>·</span>
+        <span>裁切工具</span><span>·</span>
+        <span>工藝配件</span><span>·</span>
+      </div>
+    </div>
+
+    <!-- ===== 商品分類 ===== -->
+    <section class="categories section">
+      <div class="container">
+        <div class="section-header">
+          <div>
+            <span class="section-label">商品分類</span>
+            <h2 class="section-title">從零件到工具，<br>一站式選購</h2>
+          </div>
+          <a href="shop.html" class="section-link">查看全部 →</a>
+        </div>
+
+        <div class="categories-grid">
+          <a href="shop.html?category=%E7%B8%AB%E7%B4%9D%E6%A9%9F%E9%9B%B6%E4%BB%B6" class="category-card">
+            <div class="category-card__img-wrap">
+              <img src="images/product-05.jpg" alt="縫紉機零件" loading="lazy">
+            </div>
+            <div class="category-card__info">
+              <h3>縫紉機零件</h3>
+              <span>28 件</span>
+            </div>
+          </a>
+          <a href="shop.html?category=%E9%87%9D%E5%85%B7" class="category-card">
+            <div class="category-card__img-wrap">
+              <img src="images/product-08.jpg" alt="針具" loading="lazy">
+            </div>
+            <div class="category-card__info">
+              <h3>針具</h3>
+              <span>14 件</span>
+            </div>
+          </a>
+          <a href="shop.html?category=%E5%A3%93%E5%B8%83%E8%85%B3" class="category-card">
+            <div class="category-card__img-wrap">
+              <img src="images/product-10.jpg" alt="壓布腳" loading="lazy">
+            </div>
+            <div class="category-card__info">
+              <h3>壓布腳</h3>
+              <span>22 件</span>
+            </div>
+          </a>
+          <a href="shop.html?category=%E7%B7%9A%E6%9D%90" class="category-card">
+            <div class="category-card__img-wrap">
+              <img src="images/product-13.jpg" alt="線材" loading="lazy">
+            </div>
+            <div class="category-card__info">
+              <h3>線材</h3>
+              <span>19 件</span>
+            </div>
+          </a>
+          <a href="shop.html?category=%E5%85%B6%E4%BB%96%E9%85%8D%E4%BB%B6" class="category-card">
+            <div class="category-card__img-wrap">
+              <img src="images/product-16.jpg" alt="其他配件" loading="lazy">
+            </div>
+            <div class="category-card__info">
+              <h3>其他配件</h3>
+              <span>11 件</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 精選商品 Editorial ===== -->
+    <section class="featured-editorial">
+
+      <div class="fe-body">
+
+        <!-- 左：主視覺 -->
+        <a href="product.html?id=1" class="fe-main">
+          <img src="images/product-05.jpg" alt="不鏽鋼壓布腳" loading="lazy">
+          <div class="fe-main__meta">
+            <span class="fe-main__name">不鏽鋼壓布腳</span>
+            <span class="fe-main__price">NT$ 480</span>
+          </div>
+        </a>
+
+        <!-- 右：細節圖 + 文案 -->
+        <div class="fe-aside">
+
+          <!-- 3 張細節圖 -->
+          <div class="fe-details">
+            <a href="product.html?id=2" class="fe-detail">
+              <img src="images/product-06.jpg" alt="通用縫紉針" loading="lazy">
+            </a>
+            <a href="product.html?id=3" class="fe-detail">
+              <img src="images/product-07.jpg" alt="精密梭殼" loading="lazy">
+            </a>
+            <a href="product.html?id=4" class="fe-detail">
+              <img src="images/product-08.jpg" alt="棉質縫紉線" loading="lazy">
+            </a>
+          </div>
+
+          <!-- 品牌文字 -->
+          <div class="fe-copy">
+            <p class="fe-copy__num">No. 01 — 05</p>
+            <p class="fe-copy__text">每一件工具，都是精密工藝的結晶。我們為台灣縫紉職人嚴選每一款零件，從材質到精度，確保使用時帶來穩定精準的體驗。</p>
+            <a href="shop.html" class="fe-copy__link">探索全部商品 →</a>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- 超大裁切標題 -->
+      <div class="fe-headline" aria-hidden="true">CRAFTSMAN</div>
+
+    </section>
+
+    <!-- ===== 品牌理念 ===== -->
+    <section class="editorial" id="editorial">
+      <div class="editorial__inner">
+        <div class="editorial__img-col">
+          <img src="images/logo-03.jpg" alt="布落之處品牌故事" loading="lazy">
+        </div>
+        <div class="editorial__text-col">
+          <span class="section-label">關於布落之處</span>
+          <h2 class="editorial__title">工藝，<br>始於對<br>細節的執著</h2>
+          <div class="editorial__body">
+            <p>我們相信，精準的工具是好工藝的起點。布落之處自成立以來，專注於為台灣縫紉職人與工藝愛好者，提供嚴選的頂級紡織零件。</p>
+            <p>每一件商品都經過嚴格把關，從材質到精度，確保在使用時帶來穩定、精準的體驗。無論家庭縫紉或商業製衣，我們都能為您找到最合適的工具。</p>
+          </div>
+          <a href="shop.html" class="btn btn--outline">探索全部商品</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 數據展示 ===== -->
+    <div class="stats-bar">
+      <div class="container">
+        <div class="stats-grid">
+          <div class="stat">
+            <span class="stat__num">500+</span>
+            <span class="stat__label">精選商品</span>
+          </div>
+          <div class="stat">
+            <span class="stat__num">10,000+</span>
+            <span class="stat__label">滿意客戶</span>
+          </div>
+          <div class="stat">
+            <span class="stat__num">5+</span>
+            <span class="stat__label">年品牌歷史</span>
+          </div>
+          <div class="stat">
+            <span class="stat__num">30+</span>
+            <span class="stat__label">合作品牌</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 電子報訂閱 ===== -->
+    <section class="newsletter section" id="newsletter">
+      <div class="container">
+        <div class="newsletter__inner">
+          <div class="newsletter__text">
+            <span class="section-label">訂閱電子報</span>
+            <h2 class="newsletter__title">掌握最新動態</h2>
+            <p>新品上架、限定優惠、紡織工藝技巧，第一手資訊直送信箱。</p>
+          </div>
+          <form class="newsletter__form" id="newsletterForm" novalidate>
+            <div class="newsletter__input-wrap">
+              <input type="email" class="newsletter__input" placeholder="您的電子信箱" required aria-label="電子信箱">
+              <button type="submit" class="btn btn--primary">訂閱</button>
+            </div>
+            <p class="newsletter__note">訂閱即表示您同意接收我們的電子報，您可隨時取消訂閱。</p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="index.html" class="site-logo">
+            <span class="site-logo__text">布落之處</span>
+          </a>
+          <p class="footer-brand__desc">精選紡織零件，為每一位工藝職人提供最可靠的專業工具。</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Instagram">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="0.5" fill="currentColor" stroke="none"/>
+              </svg>
+            </a>
+            <a href="#" class="social-link" aria-label="Facebook">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col__title">商品分類</h4>
+          <ul class="footer-links">
+            <li><a href="shop.html?category=%E7%B8%AB%E7%B4%9D%E6%A9%9F%E9%9B%B6%E4%BB%B6">縫紉機零件</a></li>
+            <li><a href="shop.html?category=%E9%87%9D%E5%85%B7">針具</a></li>
+            <li><a href="shop.html?category=%E5%A3%93%E5%B8%83%E8%85%B3">壓布腳</a></li>
+            <li><a href="shop.html?category=%E7%B7%9A%E6%9D%90">線材</a></li>
+            <li><a href="shop.html?category=%E5%85%B6%E4%BB%96%E9%85%8D%E4%BB%B6">其他配件</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col__title">客戶服務</h4>
+          <ul class="footer-links">
+            <li><a href="#">常見問題</a></li>
+            <li><a href="#">退換貨政策</a></li>
+            <li><a href="#">運送說明</a></li>
+            <li><a href="#">隱私政策</a></li>
+            <li><a href="#">條款與細則</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-col">
+          <h4 class="footer-col__title">聯絡我們</h4>
+          <ul class="footer-contact">
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>
+              </svg>
+              service@buluo.tw
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              週一至週五 10:00–18:00
+            </li>
+            <li>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+              </svg>
+              台灣 Taiwan
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2024 布落之處. All rights reserved.</p>
+        <div class="footer-bottom__links">
+          <a href="#">隱私政策</a>
+          <a href="#">使用條款</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

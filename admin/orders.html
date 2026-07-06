@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>訂單管理 — 布落之處後台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <p class="sidebar-brand__name">布落之處</p>
+      <p class="sidebar-brand__sub">Admin</p>
+    </div>
+    <nav class="sidebar-nav">
+      <p class="nav-section-label">管理</p>
+      <a href="orders.html" class="nav-link active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        訂單管理
+      </a>
+      <a href="products.html" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        商品管理
+      </a>
+      <a href="customers.html" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        客戶資料
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" id="logoutBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        登出
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="開啟選單">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+        <span class="topbar-title">訂單管理</span>
+      </div>
+      <div class="topbar-actions">
+        <span id="topbarOrderCount" style="font-size:12px;color:#999;"></span>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <!-- Stats -->
+      <div class="stats-cards" id="statsCards">
+        <div class="stat-card"><p class="stat-card__num" id="statTotal">—</p><p class="stat-card__label">總訂單數</p></div>
+        <div class="stat-card"><p class="stat-card__num" id="statRevenue">—</p><p class="stat-card__label">總營收</p></div>
+        <div class="stat-card"><p class="stat-card__num" id="statPending">—</p><p class="stat-card__label">待處理</p></div>
+        <div class="stat-card"><p class="stat-card__num" id="statShipped">—</p><p class="stat-card__label">已出貨</p></div>
+      </div>
+
+      <!-- Table -->
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-title">全部訂單</span>
+          <div class="table-filters">
+            <div class="filter-tabs" id="statusFilterTabs">
+              <button class="filter-tab active" data-status="">全部</button>
+              <button class="filter-tab" data-status="待付款">待付款</button>
+              <button class="filter-tab" data-status="處理中">處理中</button>
+              <button class="filter-tab" data-status="已出貨">已出貨</button>
+              <button class="filter-tab" data-status="已完成">已完成</button>
+              <button class="filter-tab" data-status="已取消">已取消</button>
+            </div>
+          </div>
+        </div>
+
+        <div style="overflow-x:auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>訂單編號</th>
+                <th>客戶</th>
+                <th>付款方式</th>
+                <th>付款狀態</th>
+                <th>訂單狀態</th>
+                <th>金額</th>
+                <th>下單時間</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <tr class="loading-row"><td colspan="8">載入中…</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="admin-pagination" id="adminPagination" style="display:none">
+          <span id="paginationInfo"></span>
+          <div class="pagination-btns" id="paginationBtns"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- 訂單詳情 Modal -->
+<div class="modal-backdrop" id="orderDetailModal">
+  <div class="modal">
+    <div class="modal-header">
+      <span class="modal-title" id="modalOrderNumber">訂單詳情</span>
+      <button class="modal-close" data-close-modal="orderDetailModal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <select class="admin-select" id="modalStatusSelect" style="min-width:140px">
+        <option value="">更改訂單狀態</option>
+        <option value="待付款">待付款</option>
+        <option value="已付款">已付款</option>
+        <option value="處理中">處理中</option>
+        <option value="已出貨">已出貨</option>
+        <option value="已完成">已完成</option>
+        <option value="已取消">已取消</option>
+      </select>
+      <button class="btn-admin btn-dark" id="modalUpdateBtn">更新狀態</button>
+      <button class="btn-admin btn-outline" data-close-modal="orderDetailModal">關閉</button>
+    </div>
+  </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<script src="admin.js"></script>
+<script>
+  requireAuth();
+
+  let currentOrderId = null;
+  let currentStatus  = '';
+  let currentPage    = 1;
+  const LIMIT        = 15;
+
+  async function loadStats() {
+    const data = await adminFetch('/api/admin/orders?limit=1000');
+    if (!data?.success) return;
+    const orders = data.data;
+    document.getElementById('statTotal').textContent   = orders.length;
+    document.getElementById('statRevenue').textContent = 'NT$ ' + orders.filter(o => o.payment_status === '已付款').reduce((s, o) => s + o.total, 0).toLocaleString('zh-TW');
+    document.getElementById('statPending').textContent  = orders.filter(o => o.order_status === '處理中').length;
+    document.getElementById('statShipped').textContent  = orders.filter(o => o.order_status === '已出貨').length;
+  }
+
+  async function loadOrders(page = 1) {
+    currentPage = page;
+    const qs = new URLSearchParams({ page, limit: LIMIT, ...(currentStatus ? { status: currentStatus } : {}) });
+    const data = await adminFetch(`/api/admin/orders?${qs}`);
+    if (!data?.success) return;
+
+    const tbody = document.getElementById('ordersTableBody');
+    if (data.data.length === 0) {
+      tbody.innerHTML = '<tr class="loading-row"><td colspan="8">此分類目前沒有訂單。</td></tr>';
+      document.getElementById('adminPagination').style.display = 'none';
+      document.getElementById('topbarOrderCount').textContent = '';
+      return;
+    }
+
+    tbody.innerHTML = data.data.map(o => `
+      <tr>
+        <td><span style="font-size:12px;font-weight:500;letter-spacing:0.03em">${o.order_number}</span></td>
+        <td>
+          <span style="font-weight:500">${o.customer_name}</span>
+          <br><span style="font-size:11px;color:#999">${o.customer_email}</span>
+        </td>
+        <td>${paymentLabel(o.payment_method)}</td>
+        <td>${payBadge(o.payment_status)}</td>
+        <td>${statusBadge(o.order_status)}</td>
+        <td>${fmt(o.total)}</td>
+        <td style="white-space:nowrap;font-size:12px;color:#999">${formatDate(o.created_at)}</td>
+        <td><button class="btn-admin btn-outline btn-sm" onclick="openOrderDetail(${o.id})">查看</button></td>
+      </tr>
+    `).join('');
+
+    const total = data.pagination.total;
+    const totalPages = Math.ceil(total / LIMIT);
+    document.getElementById('topbarOrderCount').textContent = `共 ${total} 筆訂單`;
+
+    const pagDiv = document.getElementById('adminPagination');
+    const btnsDiv = document.getElementById('paginationBtns');
+    document.getElementById('paginationInfo').textContent = `第 ${page} / ${totalPages} 頁`;
+
+    btnsDiv.innerHTML = '';
+    const prev = document.createElement('button');
+    prev.className = 'page-btn-admin';
+    prev.textContent = '‹';
+    prev.disabled = page === 1;
+    prev.onclick = () => loadOrders(page - 1);
+    btnsDiv.appendChild(prev);
+
+    for (let i = Math.max(1, page-2); i <= Math.min(totalPages, page+2); i++) {
+      const b = document.createElement('button');
+      b.className = `page-btn-admin${i === page ? ' active' : ''}`;
+      b.textContent = i;
+      b.onclick = () => loadOrders(i);
+      btnsDiv.appendChild(b);
+    }
+
+    const next = document.createElement('button');
+    next.className = 'page-btn-admin';
+    next.textContent = '›';
+    next.disabled = page >= totalPages;
+    next.onclick = () => loadOrders(page + 1);
+    btnsDiv.appendChild(next);
+    pagDiv.style.display = totalPages > 1 ? 'flex' : 'none';
+  }
+
+  async function openOrderDetail(id) {
+    currentOrderId = id;
+    openModal('orderDetailModal');
+    document.getElementById('modalBody').innerHTML = '<p style="color:#bbb;font-size:13px">載入中…</p>';
+
+    const data = await adminFetch(`/api/admin/orders/${id}`);
+    if (!data?.success) return;
+    const o = data.data;
+
+    document.getElementById('modalOrderNumber').textContent = o.order_number;
+    document.getElementById('modalStatusSelect').value = '';
+
+    const itemsHtml = o.items.map(item => `
+      <div class="detail-item">
+        <div class="detail-item__name">${item.name}<br><span class="detail-item__meta">${item.category} × ${item.quantity}</span></div>
+        <span class="detail-item__subtotal">${fmt(item.price * item.quantity)}</span>
+      </div>
+    `).join('');
+
+    document.getElementById('modalBody').innerHTML = `
+      <div class="detail-grid">
+        <div class="detail-field"><p class="detail-field-label">客戶姓名</p><p class="detail-field-value">${o.customer_name}</p></div>
+        <div class="detail-field"><p class="detail-field-label">電話</p><p class="detail-field-value">${o.customer_phone}</p></div>
+        <div class="detail-field"><p class="detail-field-label">電子信箱</p><p class="detail-field-value">${o.customer_email}</p></div>
+        <div class="detail-field"><p class="detail-field-label">付款方式</p><p class="detail-field-value">${paymentLabel(o.payment_method)}</p></div>
+        <div class="detail-field" style="grid-column:1/-1"><p class="detail-field-label">收件地址</p><p class="detail-field-value">${o.customer_address}</p></div>
+        ${o.notes ? `<div class="detail-field" style="grid-column:1/-1"><p class="detail-field-label">備註</p><p class="detail-field-value">${o.notes}</p></div>` : ''}
+        <div class="detail-field"><p class="detail-field-label">付款狀態</p>${payBadge(o.payment_status)}</div>
+        <div class="detail-field"><p class="detail-field-label">訂單狀態</p>${statusBadge(o.order_status)}</div>
+        <div class="detail-field"><p class="detail-field-label">下單時間</p><p class="detail-field-value" style="font-size:12px">${formatDate(o.created_at)}</p></div>
+        <div class="detail-field"><p class="detail-field-label">更新時間</p><p class="detail-field-value" style="font-size:12px">${formatDate(o.updated_at)}</p></div>
+      </div>
+      <div class="detail-items">${itemsHtml}</div>
+      <div class="detail-totals">
+        <div class="detail-total-row"><span>商品小計</span><span>${fmt(o.subtotal)}</span></div>
+        <div class="detail-total-row"><span>運費</span><span>${o.shipping_fee === 0 ? '免費' : fmt(o.shipping_fee)}</span></div>
+        <div class="detail-total-row detail-total-row--final"><span>總計</span><span>${fmt(o.total)}</span></div>
+      </div>
+    `;
+  }
+
+  document.getElementById('modalUpdateBtn').addEventListener('click', async () => {
+    const newStatus = document.getElementById('modalStatusSelect').value;
+    if (!newStatus || !currentOrderId) return;
+
+    const data = await adminFetch(`/api/admin/orders/${currentOrderId}`, {
+      method: 'PATCH',
+      body: { order_status: newStatus },
+    });
+    if (data?.success) {
+      adminToast('訂單狀態已更新');
+      closeModal('orderDetailModal');
+      loadOrders(currentPage);
+    } else {
+      adminToast('更新失敗：' + (data?.message || ''), 'error');
+    }
+  });
+
+  /* Filter tabs */
+  document.getElementById('statusFilterTabs').addEventListener('click', e => {
+    const tab = e.target.closest('.filter-tab');
+    if (!tab) return;
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    currentStatus = tab.dataset.status;
+    loadOrders(1);
+  });
+
+  loadStats();
+  loadOrders(1);
+</script>
+</body>
+</html>

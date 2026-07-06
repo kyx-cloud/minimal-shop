@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>商品管理 — 布落之處後台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-brand">
+      <p class="sidebar-brand__name">布落之處</p>
+      <p class="sidebar-brand__sub">Admin</p>
+    </div>
+    <nav class="sidebar-nav">
+      <p class="nav-section-label">管理</p>
+      <a href="orders.html" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        訂單管理
+      </a>
+      <a href="products.html" class="nav-link active">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+        商品管理
+      </a>
+      <a href="customers.html" class="nav-link">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        客戶資料
+      </a>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" id="logoutBtn">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        登出
+      </button>
+    </div>
+  </aside>
+
+  <!-- Main -->
+  <main class="admin-main">
+    <div class="admin-topbar">
+      <div class="topbar-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="開啟選單">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+          </svg>
+        </button>
+        <span class="topbar-title">商品管理</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn-admin btn-dark" onclick="openProductModal()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          新增商品
+        </button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <div class="table-card">
+        <div class="table-header">
+          <span class="table-title">全部商品</span>
+          <span id="productCount" style="font-size:12px;color:#999"></span>
+        </div>
+        <div style="overflow-x:auto">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>商品</th>
+                <th>分類</th>
+                <th>價格</th>
+                <th>庫存</th>
+                <th>庫存數量</th>
+                <th>精選</th>
+                <th>標籤</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody">
+              <tr class="loading-row"><td colspan="8">載入中…</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- 新增/編輯 商品 Modal -->
+<div class="modal-backdrop" id="productModal">
+  <div class="modal" style="max-width:680px">
+    <div class="modal-header">
+      <span class="modal-title" id="productModalTitle">新增商品</span>
+      <button class="modal-close" data-close-modal="productModal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="productId">
+      <div class="form-row-2">
+        <div class="form-row" style="margin-bottom:0">
+          <label class="field-label">商品名稱 *</label>
+          <input class="field-input" type="text" id="pName" placeholder="不鏽鋼壓布腳">
+        </div>
+        <div class="form-row" style="margin-bottom:0">
+          <label class="field-label">分類 *</label>
+          <select class="field-select" id="pCategory">
+            <option value="">請選擇</option>
+            <option>縫紉機零件</option><option>針具</option>
+            <option>壓布腳</option><option>線材</option><option>其他配件</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row-2" style="margin-top:16px">
+        <div class="form-row" style="margin-bottom:0">
+          <label class="field-label">價格 (NT$) *</label>
+          <input class="field-input" type="number" id="pPrice" min="0" placeholder="480">
+        </div>
+        <div class="form-row" style="margin-bottom:0">
+          <label class="field-label">庫存數量</label>
+          <input class="field-input" type="number" id="pStock" min="0" placeholder="0">
+        </div>
+      </div>
+      <div class="form-row" style="margin-top:16px">
+        <label class="field-label">商品描述</label>
+        <textarea class="field-textarea" id="pDesc" placeholder="商品說明文字…"></textarea>
+      </div>
+      <div class="form-row">
+        <label class="field-label">圖片網址（每行一個，第一張為主圖）</label>
+        <textarea class="field-textarea" id="pImages" placeholder="https://picsum.photos/seed/xxx/800/960&#10;https://picsum.photos/seed/yyy/800/960" style="min-height:64px"></textarea>
+      </div>
+      <div class="form-row-2">
+        <div class="form-row" style="margin-bottom:0">
+          <label class="field-label">材質</label>
+          <select class="field-select" id="pMaterial">
+            <option value="">不指定</option>
+            <option>不鏽鋼</option><option>棉質</option><option>鍍金</option><option>合金</option>
+          </select>
+        </div>
+        <div class="form-row" style="margin-bottom:0">
+          <label class="field-label">標籤</label>
+          <input class="field-input" type="text" id="pTag" placeholder="熱銷、新品、精品…">
+        </div>
+      </div>
+      <div class="form-row" style="margin-top:16px">
+        <label class="field-label">規格（每行格式：規格名稱: 值）</label>
+        <textarea class="field-textarea" id="pSpecs" placeholder="材質: 304 不鏽鋼&#10;產地: 日本&#10;包裝: 壓布腳 × 1" style="min-height:80px"></textarea>
+      </div>
+      <div style="display:flex;gap:24px;margin-top:16px">
+        <label class="checkbox-row"><input type="checkbox" id="pInStock" checked>有庫存</label>
+        <label class="checkbox-row"><input type="checkbox" id="pFeatured">精選商品（顯示於首頁）</label>
+      </div>
+      <div id="productFormError" style="display:none;color:#C62828;font-size:12px;margin-top:12px;"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-admin btn-dark" id="saveProductBtn">儲存商品</button>
+      <button class="btn-admin btn-outline" data-close-modal="productModal">取消</button>
+    </div>
+  </div>
+</div>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<!-- 刪除確認 Modal -->
+<div class="modal-backdrop" id="deleteModal">
+  <div class="modal" style="max-width:400px">
+    <div class="modal-header">
+      <span class="modal-title">確認刪除</span>
+      <button class="modal-close" data-close-modal="deleteModal">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <p style="font-size:14px;color:#555">確定要刪除「<strong id="deleteProductName"></strong>」嗎？此操作無法復原。</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-admin btn-danger" id="confirmDeleteBtn">確定刪除</button>
+      <button class="btn-admin btn-outline" data-close-modal="deleteModal">取消</button>
+    </div>
+  </div>
+</div>
+
+<script src="admin.js"></script>
+<script>
+  requireAuth();
+
+  let editingId = null;
+  let deleteId  = null;
+
+  async function loadProducts() {
+    const data = await adminFetch('/api/admin/products');
+    if (!data?.success) return;
+    document.getElementById('productCount').textContent = `共 ${data.data.length} 件商品`;
+
+    const tbody = document.getElementById('productsTableBody');
+    if (data.data.length === 0) {
+      tbody.innerHTML = '<tr class="loading-row"><td colspan="8">目前沒有商品，請點擊「新增商品」新增。</td></tr>';
+      return;
+    }
+    tbody.innerHTML = data.data.map(p => `
+      <tr>
+        <td>
+          <div style="display:flex;align-items:center;gap:12px">
+            <img src="${p.images[0] || ''}" alt="" style="width:40px;height:40px;object-fit:cover;background:#F8F7F4;flex-shrink:0" loading="lazy">
+            <span style="font-size:13px;font-weight:500">${p.name}</span>
+          </div>
+        </td>
+        <td>${p.category}</td>
+        <td>${fmt(p.price)}</td>
+        <td>${p.in_stock ? '<span class="badge badge-instock">有庫存</span>' : '<span class="badge badge-nostock">已售完</span>'}</td>
+        <td>${p.stock_count}</td>
+        <td>${p.featured ? '<span class="badge badge-featured">精選</span>' : '—'}</td>
+        <td>${p.tag ? `<span style="font-size:11px;color:#999;letter-spacing:0.04em">${p.tag}</span>` : '—'}</td>
+        <td>
+          <div style="display:flex;gap:6px">
+            <button class="btn-admin btn-outline btn-sm" onclick="openProductModal(${JSON.stringify(p).replace(/"/g,'&quot;')})">編輯</button>
+            <button class="btn-admin btn-danger btn-sm" onclick="confirmDelete(${p.id},'${p.name.replace(/'/g,"\\'")}')">刪除</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function openProductModal(p = null) {
+    editingId = p ? p.id : null;
+    document.getElementById('productModalTitle').textContent = p ? '編輯商品' : '新增商品';
+    document.getElementById('productId').value   = p?.id || '';
+    document.getElementById('pName').value       = p?.name || '';
+    document.getElementById('pCategory').value   = p?.category || '';
+    document.getElementById('pPrice').value      = p?.price || '';
+    document.getElementById('pStock').value      = p?.stock_count ?? '';
+    document.getElementById('pDesc').value       = p?.description || '';
+    document.getElementById('pImages').value     = p?.images?.join('\n') || '';
+    document.getElementById('pMaterial').value   = p?.material || '';
+    document.getElementById('pTag').value        = p?.tag || '';
+    document.getElementById('pInStock').checked  = p ? Boolean(p.in_stock) : true;
+    document.getElementById('pFeatured').checked = p ? Boolean(p.featured) : false;
+
+    /* 規格：轉為每行 key: value */
+    document.getElementById('pSpecs').value = p?.specs
+      ? Object.entries(p.specs).map(([k,v]) => `${k}: ${v}`).join('\n')
+      : '';
+
+    document.getElementById('productFormError').style.display = 'none';
+    openModal('productModal');
+  }
+
+  function parseSpecs(text) {
+    const specs = {};
+    text.trim().split('\n').forEach(line => {
+      const idx = line.indexOf(':');
+      if (idx < 0) return;
+      const k = line.slice(0, idx).trim();
+      const v = line.slice(idx + 1).trim();
+      if (k && v) specs[k] = v;
+    });
+    return specs;
+  }
+
+  document.getElementById('saveProductBtn').addEventListener('click', async () => {
+    const errEl = document.getElementById('productFormError');
+    const name  = document.getElementById('pName').value.trim();
+    const cat   = document.getElementById('pCategory').value;
+    const price = parseFloat(document.getElementById('pPrice').value);
+
+    if (!name || !cat || isNaN(price)) {
+      errEl.textContent = '請填寫商品名稱、分類與價格。';
+      errEl.style.display = 'block';
+      return;
+    }
+    errEl.style.display = 'none';
+
+    const body = {
+      name,
+      category:    cat,
+      price:       price,
+      description: document.getElementById('pDesc').value.trim(),
+      images:      document.getElementById('pImages').value.trim().split('\n').map(s => s.trim()).filter(Boolean),
+      specs:       parseSpecs(document.getElementById('pSpecs').value),
+      in_stock:    document.getElementById('pInStock').checked,
+      stock_count: parseInt(document.getElementById('pStock').value) || 0,
+      featured:    document.getElementById('pFeatured').checked,
+      tag:         document.getElementById('pTag').value.trim() || null,
+      material:    document.getElementById('pMaterial').value || null,
+    };
+
+    const url    = editingId ? `/api/admin/products/${editingId}` : '/api/admin/products';
+    const method = editingId ? 'PUT' : 'POST';
+    const data   = await adminFetch(url, { method, body });
+
+    if (data?.success) {
+      adminToast(editingId ? '商品已更新' : '商品已新增');
+      closeModal('productModal');
+      loadProducts();
+    } else {
+      errEl.textContent = data?.message || '儲存失敗';
+      errEl.style.display = 'block';
+    }
+  });
+
+  function confirmDelete(id, name) {
+    deleteId = id;
+    document.getElementById('deleteProductName').textContent = name;
+    openModal('deleteModal');
+  }
+
+  document.getElementById('confirmDeleteBtn').addEventListener('click', async () => {
+    if (!deleteId) return;
+    const data = await adminFetch(`/api/admin/products/${deleteId}`, { method: 'DELETE' });
+    if (data?.success) {
+      adminToast('商品已刪除');
+      closeModal('deleteModal');
+      loadProducts();
+    } else {
+      adminToast(data?.message || '刪除失敗', 'error');
+    }
+  });
+
+  loadProducts();
+</script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登入 — 布落之處後台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="login-page">
+    <div class="login-box">
+      <p class="login-logo">布落之處</p>
+      <p class="login-subtitle">Admin 後台管理</p>
+
+      <p class="login-error" id="loginError"></p>
+
+      <form id="loginForm" novalidate>
+        <div class="form-row">
+          <label class="field-label" for="loginUser">帳號</label>
+          <input class="field-input" type="text" id="loginUser" placeholder="admin" autocomplete="username" required>
+        </div>
+        <div class="form-row" style="margin-top:16px">
+          <label class="field-label" for="loginPass">密碼</label>
+          <input class="field-input" type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+        <button class="btn-admin btn-dark" style="width:100%;justify-content:center;margin-top:24px;padding:14px;" id="loginBtn" type="submit">
+          登入
+        </button>
+      </form>
+
+      <p class="login-footer">預設帳號 admin &nbsp;/&nbsp; 密碼 buluo2024</p>
+    </div>
+  </div>
+
+  <script src="admin.js"></script>
+</body>
+</html>
