@@ -162,7 +162,7 @@ if (loginForm) {
       const data = await res.json();
       if (data.success) {
         setToken(data.token);
-        window.location.href = '/admin/orders.html';
+        window.location.href = '/admin/dashboard.html';
       } else {
         errEl.textContent = data.message;
         errEl.style.display = 'block';

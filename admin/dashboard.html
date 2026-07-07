@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>總覽 — 布落之處後台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="admin.css">
+  <style>
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 24px;
+    }
+    .stat-card__label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 10px;
+    }
+    .stat-card__value {
+      font-size: 1.75rem;
+      font-weight: 600;
+      color: var(--text);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .stat-card__sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+    .stat-card--accent { border-left: 3px solid #111; }
+    .dashboard-cols {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 24px;
+    }
+    .dash-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .dash-card__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .dash-card__title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      letter-spacing: 0.02em;
+    }
+    .dash-card__link {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+    }
+    .dash-card__link:hover { color: var(--text); }
+    /* 最近訂單表格 */
+    .recent-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .recent-table th {
+      text-align: left;
+      padding: 10px 24px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      background: #fafafa;
+      border-bottom: 1px solid var(--border);
+    }
+    .recent-table td {
+      padding: 13px 24px;
+      border-bottom: 1px solid #f0f0f0;
+      color: var(--text);
+    }
+    .recent-table tr:last-child td { border-bottom: none; }
+    /* 熱門商品清單 */
+    .hot-list { padding: 8px 0; }
+    .hot-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 24px;
+      gap: 12px;
+    }
+    .hot-rank {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: #f5f5f5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .hot-rank--top { background: #111; color: #fff; }
+    .hot-name { flex: 1; font-size: 13px; color: var(--text); }
+    .hot-qty  { font-size: 13px; font-weight: 600; color: var(--text); }
+    .hot-bar-wrap { width: 60px; background: #f5f5f5; border-radius: 3px; height: 4px; }
+    .hot-bar { height: 4px; background: #111; border-radius: 3px; }
+    .quick-actions { display: flex; gap: 12px; padding: 0; }
+    .quick-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 14px;
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+      font-family: inherit;
+    }
+    .quick-btn:hover { background: #f5f5f5; }
+    .low-stock-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      background: #FFF3E0;
+      color: #E65100;
+      font-weight: 500;
+    }
+    @media (max-width: 1100px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; }
+      .dashboard-cols { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 640px) {
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .stat-card  { padding: 18px; }
+      .stat-card__value { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="admin-layout">
+
+    <!-- ── Sidebar ── -->
+    <aside class="admin-sidebar" id="adminSidebar">
+      <div class="sidebar-brand">
+        <span>布落之處</span>
+        <small>後台管理</small>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="sidebar-nav__item is-active">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          總覽
+        </a>
+        <a href="orders.html" class="sidebar-nav__item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+          訂單管理
+        </a>
+        <a href="products.html" class="sidebar-nav__item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m2 7 10-5 10 5v10l-10 5L2 17V7Z"/><path d="M12 22V12"/><path d="m2 7 10 5 10-5"/></svg>
+          商品管理
+        </a>
+        <a href="customers.html" class="sidebar-nav__item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/></svg>
+          會員列表
+        </a>
+      </nav>
+      <div class="sidebar-footer">
+        <a href="../index.html" target="_blank" style="font-size:12px;color:var(--text-muted);text-decoration:none">← 前台</a>
+        <button class="btn-logout" id="adminLogout">登出</button>
+      </div>
+    </aside>
+
+    <!-- ── Main ── -->
+    <main class="admin-main">
+      <div class="admin-topbar" id="adminTopbar">
+        <button class="topbar-hamburger" id="sidebarToggle" aria-label="切換側欄">
+          <span></span><span></span><span></span>
+        </button>
+        <h1 class="topbar-title">總覽</h1>
+        <div class="topbar-actions">
+          <span id="adminName" style="font-size:13px;color:var(--text-muted)"></span>
+        </div>
+      </div>
+
+      <div class="admin-content">
+
+        <!-- 快速操作 -->
+        <div class="quick-actions" style="margin-bottom:24px">
+          <a href="orders.html" class="quick-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+            訂單管理
+          </a>
+          <a href="products.html" class="quick-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m2 7 10-5 10 5v10l-10 5L2 17V7Z"/></svg>
+            商品管理
+          </a>
+          <a href="customers.html" class="quick-btn">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/></svg>
+            會員列表
+          </a>
+          <button class="quick-btn" onclick="loadStats()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            重新整理
+          </button>
+        </div>
+
+        <!-- 統計卡片 -->
+        <div class="stats-grid" id="statsGrid">
+          <!-- 由 JS 動態填入 -->
+          <div class="stat-card"><div class="stat-card__label">今日訂單</div><div class="stat-card__value" id="statTodayOrders">—</div></div>
+          <div class="stat-card stat-card--accent"><div class="stat-card__label">今日營收</div><div class="stat-card__value" id="statTodayRev">—</div></div>
+          <div class="stat-card"><div class="stat-card__label">累計訂單</div><div class="stat-card__value" id="statTotalOrders">—</div></div>
+          <div class="stat-card"><div class="stat-card__label">累計營收</div><div class="stat-card__value" id="statTotalRev">—</div></div>
+        </div>
+
+        <!-- 低庫存警示 -->
+        <div id="lowStockAlert" style="display:none;margin-bottom:24px;padding:14px 20px;background:#FFF8E1;border:1px solid #FFE082;border-radius:8px;font-size:13px">
+          <strong style="color:#E65100">⚠ 低庫存商品：</strong>
+          <span id="lowStockList"></span>
+        </div>
+
+        <!-- 最近訂單 + 熱門商品 -->
+        <div class="dashboard-cols">
+          <div class="dash-card">
+            <div class="dash-card__head">
+              <span class="dash-card__title">最近訂單</span>
+              <a href="orders.html" class="dash-card__link">查看全部 →</a>
+            </div>
+            <div style="overflow-x:auto">
+              <table class="recent-table" id="recentOrdersTable">
+                <thead>
+                  <tr>
+                    <th>訂單編號</th>
+                    <th>顧客</th>
+                    <th>金額</th>
+                    <th>狀態</th>
+                  </tr>
+                </thead>
+                <tbody id="recentOrdersBody">
+                  <tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:32px">載入中…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="dash-card">
+            <div class="dash-card__head">
+              <span class="dash-card__title">熱門商品</span>
+              <span style="font-size:12px;color:var(--text-muted)">依銷售量</span>
+            </div>
+            <div class="hot-list" id="hotList">
+              <p style="padding:24px;color:var(--text-muted);font-size:13px">載入中…</p>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /.admin-content -->
+    </main>
+
+  </div><!-- /.admin-layout -->
+
+  <script src="admin.js"></script>
+  <script>
+    requireAuth();
+
+    const fmt    = n => `NT$ ${Number(n).toLocaleString()}`;
+    const STATUS_COLOR = {
+      '待付款':'#E65100','已付款':'#2E7D32','處理中':'#1565C0',
+      '已出貨':'#6A1B9A','已完成':'#388E3C','已取消':'#757575'
+    };
+
+    async function loadStats() {
+      try {
+        const d = await adminFetch('/api/admin/stats');
+        if (!d.success) return;
+        const s = d.data;
+
+        document.getElementById('statTodayOrders').textContent = s.today_orders;
+        document.getElementById('statTodayRev').textContent    = fmt(s.today_revenue);
+        document.getElementById('statTotalOrders').textContent = s.total_orders;
+        document.getElementById('statTotalRev').textContent    = fmt(s.total_revenue);
+
+        /* 低庫存 */
+        if (s.low_stock?.length) {
+          document.getElementById('lowStockAlert').style.display = 'block';
+          document.getElementById('lowStockList').textContent =
+            s.low_stock.map(p => `${p.name}（剩 ${p.stock_count}）`).join('、');
+        }
+
+        /* 最近訂單 */
+        const tbody = document.getElementById('recentOrdersBody');
+        if (!s.recent_orders?.length) {
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:var(--text-muted);padding:32px">尚無訂單</td></tr>';
+        } else {
+          tbody.innerHTML = s.recent_orders.map(o => `
+            <tr>
+              <td><a href="orders.html" style="color:var(--text);font-weight:500">${o.order_number}</a></td>
+              <td style="color:var(--text-muted)">${o.customer_name || '—'}</td>
+              <td style="font-weight:500">${fmt(o.total)}</td>
+              <td><span style="color:${STATUS_COLOR[o.order_status]||'#999'};font-size:12px;font-weight:500">${o.order_status}</span></td>
+            </tr>`).join('');
+        }
+
+        /* 熱門商品 */
+        const hotEl = document.getElementById('hotList');
+        if (!s.hot_products?.length) {
+          hotEl.innerHTML = '<p style="padding:24px;color:var(--text-muted);font-size:13px">尚無銷售記錄</p>';
+        } else {
+          const max = s.hot_products[0]?.qty || 1;
+          hotEl.innerHTML = s.hot_products.map((p, i) => `
+            <div class="hot-item">
+              <span class="hot-rank ${i === 0 ? 'hot-rank--top' : ''}">${i + 1}</span>
+              <span class="hot-name">${p.name}</span>
+              <div class="hot-bar-wrap"><div class="hot-bar" style="width:${Math.round(p.qty/max*100)}%"></div></div>
+              <span class="hot-qty">${p.qty}</span>
+            </div>`).join('');
+        }
+      } catch (e) {
+        console.error('Stats error:', e);
+      }
+    }
+
+    loadStats();
+  </script>
+</body>
+</html>

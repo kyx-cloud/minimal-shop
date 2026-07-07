@@ -351,14 +351,442 @@ function initHeader() {
 }
 
 /* ============================================================
+   職人首選：縮圖互動 + 鏤空大字圖片同步
+   ============================================================ */
+function initFeaturedEditorial() {
+  const mainImg  = document.getElementById('feMainImg');
+  const heroType = document.getElementById('feHeroType');
+  const thumbs   = document.querySelectorAll('.fe-thumb');
+  if (!mainImg || !thumbs.length) return;
+
+  let currentSrc = thumbs[0]?.dataset.src || '';
+  let isSwitching = false;
+
+  function switchTo(src, activeThumb) {
+    if (isSwitching || src === currentSrc) return;
+    isSwitching  = true;
+    currentSrc   = src;
+
+    /* Cross-fade: fade out */
+    mainImg.classList.add('is-switching');
+
+    setTimeout(() => {
+      mainImg.src = src;
+      mainImg.alt = activeThumb.dataset.alt || '';
+
+      /* Sync hero type background to match current image */
+      if (heroType) heroType.style.backgroundImage = `url(${src})`;
+
+      /* Fade in */
+      mainImg.classList.remove('is-switching');
+      isSwitching = false;
+    }, 340);
+
+    /* Update active state */
+    thumbs.forEach(t => {
+      t.classList.remove('is-active');
+      t.setAttribute('aria-pressed', 'false');
+    });
+    activeThumb.classList.add('is-active');
+    activeThumb.setAttribute('aria-pressed', 'true');
+  }
+
+  thumbs.forEach(thumb => {
+    /* hover → preview */
+    thumb.addEventListener('mouseenter', () => switchTo(thumb.dataset.src, thumb));
+    /* click → confirm */
+    thumb.addEventListener('click', () => switchTo(thumb.dataset.src, thumb));
+  });
+}
+
+/* ============================================================
    首頁 (index.html)
    ============================================================ */
-function initIndex() {
-  const grid = document.getElementById('featuredProductsGrid');
-  if (!grid) return;
+/* ============================================================
+   Hero Carousel data
+   ============================================================ */
+const HERO_SLIDES = [
+  {
+    num: '001',
+    category: '壓布腳',
+    title: ['不鏽鋼', '壓布腳'],
+    desc: '304 不鏽鋼精密鑄造，光滑底部確保布料順暢送進，適用大多數家用縫紉機型號。',
+    image: 'images/no-05.png',
+    link: 'shop.html',
+  },
+  {
+    num: '002',
+    category: '針具',
+    title: ['通用縫紉針', '10 入組'],
+    desc: '精鋼材質，針尖鋒利精準，適合棉質、絲質、混紡等多種布料，每一針落點精確。',
+    image: 'images/no-06.png',
+    link: 'shop.html',
+  },
+  {
+    num: '003',
+    category: '縫紉機零件',
+    title: ['精密', '梭殼'],
+    desc: '鋅合金外殼，彈簧張力穩定，縫線均勻送出，有效延長縫紉機整體使用壽命。',
+    image: 'images/no-07.png',
+    link: 'shop.html',
+  },
+  {
+    num: '004',
+    category: '線材',
+    title: ['棉質縫紉線', '500m'],
+    desc: '100% 純棉，色彩飽和不褪色，強度高不易斷線，是職人日常首選。',
+    image: 'images/no-08.png',
+    link: 'shop.html',
+  },
+  {
+    num: '005',
+    category: '縫紉機零件',
+    title: ['精工', '梭芯'],
+    desc: '鋅合金精密鑄造，與 Class 15 梭殼完美配合，走線平穩，縫製精準。',
+    image: 'images/no-09.png',
+    link: 'shop.html',
+  },
+];
 
-  const featured = PRODUCTS.filter(p => p.featured);
-  featured.forEach(p => grid.appendChild(createProductCard(p)));
+/* ============================================================
+   Hero Carousel Component
+   ============================================================ */
+function initHeroCarousel() {
+  const section   = document.getElementById('heroCarousel');
+  if (!section) return;
+
+  const ghostNum    = document.getElementById('hcGhostNum');
+  const labelEl     = document.getElementById('hcLabel');
+  const titleEl     = document.getElementById('hcTitle');
+  const descEl      = document.getElementById('hcDesc');
+  const btnEl       = document.getElementById('hcBtn');
+  const productEl   = document.getElementById('hcProduct');
+  const productImg  = document.getElementById('hcProductImg');
+  const panelEl     = document.getElementById('hcPanel');
+  const panelGhost  = document.getElementById('hcPanelGhost');
+  const previewEl   = document.getElementById('hcPreview');
+  const previewImg  = document.getElementById('hcPreviewImg');
+  const panelNumEl  = document.getElementById('hcPanelNum');
+  const panelNameEl = document.getElementById('hcPanelName');  /* now h2.hc-title */
+  const panelCatEl  = document.getElementById('hcPanelCat');
+  const panelDescEl = document.getElementById('hcPanelDesc');
+  const prevBtn     = document.getElementById('hcPrev');
+  const nextBtn     = document.getElementById('hcNext');
+  const counterEl   = document.getElementById('hcCounter');
+  const pagiEl      = document.getElementById('hcPagination');
+
+  const total = HERO_SLIDES.length;
+  let current  = 0;
+  let isAnimating = false;
+  let autoTimer   = null;
+  let floatTween  = null;
+
+  function pad3(n) { return String(n).padStart(3, '0'); }
+
+  /* Build pagination: 001 / 002 / 003 style */
+  pagiEl.innerHTML = '';
+  HERO_SLIDES.forEach((s, i) => {
+    if (i > 0) {
+      const sep = document.createElement('span');
+      sep.className = 'hc-dot-sep';
+      sep.textContent = '/';
+      sep.setAttribute('aria-hidden', 'true');
+      pagiEl.appendChild(sep);
+    }
+    const dot = document.createElement('button');
+    dot.className = 'hc-dot' + (i === 0 ? ' is-active' : '');
+    dot.textContent = pad3(i + 1);
+    dot.setAttribute('role', 'tab');
+    dot.setAttribute('aria-label', `第 ${i + 1} 張`);
+    dot.addEventListener('click', () => { goTo(i); stopAuto(); startAuto(); });
+    pagiEl.appendChild(dot);
+  });
+
+  function updateDots(idx) {
+    pagiEl.querySelectorAll('.hc-dot').forEach((d, i) => d.classList.toggle('is-active', i === idx));
+  }
+
+  function updateCounter(idx) {
+    if (counterEl) counterEl.textContent = `${pad3(idx + 1)} / ${pad3(total)}`;
+  }
+
+  /* Clear all GSAP-accumulated transforms so CSS positioning takes over again */
+  function resetHeroPosition() {
+    if (typeof gsap === 'undefined') return;
+    if (floatTween) floatTween.kill();
+    /* Wrappers: clear any GSAP transform so CSS translate(-50%,-50%) is restored */
+    gsap.set(productEl, { x: 0, y: 0, scale: 1, rotation: 0, clearProps: 'transform' });
+    gsap.set(productImg, { x: 0, y: 0, scale: 1, rotation: 0, clearProps: 'transform' });
+    if (previewEl)  gsap.set(previewEl,  { x: 0, y: 0, scale: 1, rotation: 0, clearProps: 'transform' });
+    if (previewImg) gsap.set(previewImg, { x: 0, y: 0, scale: 1, rotation: 0, clearProps: 'transform' });
+  }
+
+  /* Float the product img (NOT the wrapper — wrapper owns CSS centering transform) */
+  function startFloat() {
+    if (floatTween) floatTween.kill();
+    gsap.set(productImg, { y: 0 });
+    floatTween = gsap.to(productImg, {
+      y: -22,
+      duration: 3.2,
+      ease: 'sine.inOut',
+      yoyo: true,
+      repeat: -1,
+    });
+  }
+
+  /* Render new slide content (DOM update, no anim) */
+  function applySlide(idx) {
+    const s    = HERO_SLIDES[idx];
+    const nxt  = HERO_SLIDES[(idx + 1) % total];
+
+    labelEl.textContent = s.category;
+    titleEl.innerHTML   = s.title.map(t => `<span class="tl"><span class="tc">${t}</span></span>`).join('');
+    descEl.textContent  = s.desc;
+    btnEl.href          = s.link;
+
+    productImg.src = s.image;
+    productImg.alt = s.title.join(' ');
+
+    previewImg.src = nxt.image;
+    previewImg.alt = nxt.title.join(' ');
+
+    ghostNum.textContent = s.num;
+
+    /* Panel info = next slide */
+    if (panelGhost)  panelGhost.textContent = nxt.num;
+    if (panelNumEl)  panelNumEl.textContent = 'NO.' + nxt.num;
+    if (panelNameEl) panelNameEl.innerHTML  = nxt.title.map(t => `<span class="tl"><span class="tc">${t}</span></span>`).join('');
+    if (panelCatEl)  panelCatEl.textContent = nxt.category;
+    if (panelDescEl) panelDescEl.textContent = nxt.desc;
+
+    updateDots(idx);
+    updateCounter(idx);
+  }
+
+  /* GSAP slide transition */
+  function goTo(idx, dir = 1) {
+    if (isAnimating || idx === current) return;
+    isAnimating = true;
+    const useGSAP = typeof gsap !== 'undefined';
+    const prev = current;
+    current = idx;
+
+    const s = HERO_SLIDES[idx];
+    const next = HERO_SLIDES[(idx + 1) % total];
+
+    if (!useGSAP) {
+      applySlide(idx);
+      isAnimating = false;
+      return;
+    }
+
+    /* Kill float and reset all transforms before transition starts */
+    resetHeroPosition();
+
+    const tl = gsap.timeline({ onComplete: () => {
+      isAnimating = false;
+      resetHeroPosition(); /* clear residual transforms before float restarts */
+      startFloat();
+    }});
+
+    /* Text out */
+    tl.to([labelEl, titleEl, descEl, btnEl], {
+      opacity: 0,
+      y: dir > 0 ? -18 : 18,
+      duration: 0.28,
+      stagger: 0.04,
+      ease: 'power2.in',
+    });
+
+    /* Product IMG out (wrapper is untouched — it owns the CSS centering transform) */
+    tl.to(productImg, {
+      opacity: 0,
+      x: dir > 0 ? '-12%' : '12%',
+      scale: 0.93,
+      rotate: dir > 0 ? -1.5 : 1.5,
+      duration: 0.42,
+      ease: 'power2.in',
+    }, '<0.05');
+
+    /* Ghost number out */
+    tl.to(ghostNum, { opacity: 0, duration: 0.28, ease: 'power1.in' }, '<');
+
+    /* Swap content — position productImg at incoming-side offset */
+    tl.call(() => {
+      applySlide(idx);
+      gsap.set(productImg, { x: dir > 0 ? '18%' : '-18%', scale: 0.96, rotate: dir > 0 ? 2 : -2, opacity: 0 });
+      gsap.set([labelEl, titleEl, descEl, btnEl], { opacity: 0, y: dir > 0 ? 20 : -20 });
+    });
+
+    /* Product IMG in */
+    tl.to(productImg, {
+      opacity: 1,
+      x: 0,
+      y: 0,
+      scale: 1,
+      rotate: 0,
+      duration: 0.9,
+      ease: 'power3.out',
+    });
+
+    /* Ghost number in */
+    tl.to(ghostNum, { opacity: 0.72, duration: 0.55, ease: 'power2.out' }, '<0.1');
+
+    /* Text in — stagger */
+    tl.to([labelEl, titleEl, descEl, btnEl], {
+      opacity: 1,
+      y: 0,
+      duration: 0.55,
+      stagger: 0.07,
+      ease: 'power3.out',
+    }, '<0.12');
+
+    /* Preview wrapper: opacity only (no y — wrapper has CSS transform for positioning) */
+    if (previewEl) {
+      tl.to(previewEl, { opacity: 0, duration: 0.25, ease: 'power1.in' }, 0);
+      tl.to(previewEl, { opacity: 1, duration: 0.5,  ease: 'power2.out' }, 0.45);
+    }
+    /* Panel text: y+opacity safe (these elements have no CSS transform) */
+    const panelTextEls = [panelCatEl, panelNameEl, panelDescEl, panelNumEl].filter(Boolean);
+    if (panelTextEls.length) {
+      tl.to(panelTextEls, { opacity: 0, y: -10, duration: 0.25, ease: 'power1.in' }, 0);
+      tl.to(panelTextEls, { opacity: 1, y:   0, duration: 0.5,  ease: 'power2.out' }, 0.45);
+    }
+    if (panelGhost) {
+      tl.to(panelGhost, { opacity: 0, duration: 0.25, ease: 'power1.in' }, 0);
+      tl.to(panelGhost, { opacity: 0.72, duration: 0.55, ease: 'power2.out' }, 0.4);
+    }
+  }
+
+  function next() { goTo((current + 1) % total, 1); }
+  function prev() { goTo((current - 1 + total) % total, -1); }
+
+  /* Auto-play */
+  function startAuto() {
+    stopAuto();
+    autoTimer = setInterval(next, 5000);
+  }
+  function stopAuto() {
+    clearInterval(autoTimer);
+    autoTimer = null;
+  }
+
+  /* ── Drag / swipe (pointer + touch) ── */
+  let dragStartX = 0;
+  let isDragging = false;
+
+  section.addEventListener('pointerdown', e => {
+    /* Skip drag when clicking on interactive controls */
+    if (e.target.closest('button, a')) return;
+    dragStartX = e.clientX;
+    isDragging = true;
+    stopAuto();
+  });
+  section.addEventListener('pointermove', () => { /* intentionally empty — just track */ });
+  section.addEventListener('pointerup', e => {
+    if (!isDragging) return;
+    isDragging = false;
+    const dx = e.clientX - dragStartX;
+    if (Math.abs(dx) > 50) {
+      dx < 0 ? next() : prev();
+    } else {
+      startAuto(); /* no drag — just resume */
+      return;
+    }
+    startAuto();
+  });
+  section.addEventListener('pointercancel', () => {
+    isDragging = false;
+    startAuto();
+  });
+
+  /* Touch fallback for browsers that don't fire pointer events on touch */
+  let touchStartX = 0;
+  section.addEventListener('touchstart', e => {
+    if (e.target.closest('button, a')) return;
+    touchStartX = e.touches[0].clientX;
+    stopAuto();
+  }, { passive: true });
+  section.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    if (Math.abs(dx) > 50) dx < 0 ? next() : prev();
+    startAuto();
+  }, { passive: true });
+
+  /* Pause on hover (desktop) */
+  section.addEventListener('mouseenter', stopAuto);
+  section.addEventListener('mouseleave', startAuto);
+
+  /* ── Buttons ── */
+  nextBtn?.addEventListener('click', e => { e.stopPropagation(); next(); stopAuto(); startAuto(); });
+  prevBtn?.addEventListener('click', e => { e.stopPropagation(); prev(); stopAuto(); startAuto(); });
+  panelEl?.addEventListener('click', e => {
+    if (e.target.closest('button')) return;
+    next(); stopAuto(); startAuto();
+  });
+
+  /* Entry animation */
+  function playEntry() {
+    const useGSAP = typeof gsap !== 'undefined';
+    const loaderExists = !!document.getElementById('siteLoader');
+    const delay = loaderExists && !sessionStorage.getItem('buluo_loaded_prev') ? 2.3 : 0.1;
+    sessionStorage.setItem('buluo_loaded_prev', '1');
+
+    applySlide(0);
+
+    if (!useGSAP) {
+      startAuto();
+      return;
+    }
+
+    /* Animate productImg (not the wrapper), wrapper keeps its CSS centering transform */
+    gsap.set(productImg, { opacity: 0, scale: 0.9, y: 28 });
+    gsap.set([labelEl, descEl, btnEl], { opacity: 0, y: 22 });
+    gsap.set(titleEl.querySelectorAll('.tc'), { y: '100%' });
+    gsap.set(ghostNum, { opacity: 0 });
+    if (panelEl)    gsap.set(panelEl,    { opacity: 0, x: 36 });
+    if (panelGhost) gsap.set(panelGhost, { opacity: 0 });
+
+    const tl = gsap.timeline({ delay, onComplete: startFloat });
+
+    tl.to(ghostNum, { opacity: 0.72, duration: 1.3, ease: 'power2.out' });
+    tl.to(titleEl.querySelectorAll('.tc'), {
+      y: '0%', duration: 1.05, stagger: 0.12, ease: 'power3.out',
+    }, '-=0.85');
+    tl.to(labelEl, { opacity: 1, y: 0, duration: 0.65, ease: 'power3.out' }, '-=0.55');
+    tl.to(descEl,  { opacity: 1, y: 0, duration: 0.65, ease: 'power3.out' }, '-=0.4');
+    tl.to(btnEl,   { opacity: 1, y: 0, duration: 0.65, ease: 'power3.out' }, '-=0.45');
+    tl.to(productImg, {
+      opacity: 1, scale: 1, y: 0, duration: 1.4, ease: 'power3.out',
+    }, 0.12);
+    /* Right column slides in from right */
+    if (panelEl) tl.to(panelEl, { opacity: 1, x: 0, duration: 1.0, ease: 'power3.out' }, '-=0.65');
+    if (panelGhost) tl.to(panelGhost, { opacity: 0.72, duration: 0.8, ease: 'power2.out' }, '-=0.5');
+  }
+
+  /* Reset on tab-return so accumulated GSAP transforms don't linger */
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && !isAnimating) {
+      resetHeroPosition();
+      startFloat();
+    }
+  });
+
+  /* Reset on resize (layout shift can leave img offset) */
+  let _resizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(_resizeTimer);
+    _resizeTimer = setTimeout(() => { if (!isAnimating) resetHeroPosition(); }, 200);
+  });
+
+  resetHeroPosition(); /* clear any stale state before entry animation */
+  playEntry();
+  startAuto();
+}
+
+function initIndex() {
+  initHeroCarousel();
+  initFeaturedEditorial();
 
   /* Newsletter */
   const form = document.getElementById('newsletterForm');
@@ -740,25 +1168,133 @@ function initCart() {
 }
 
 /* ============================================================
-   視覺動態：Header scroll + Hero 動畫 + 滾動淡入
+   載入動畫 (index.html only — GSAP required)
    ============================================================ */
-function initScrollEffects() {
-  /* Header: 滾動後加 shadow */
-  const header = document.getElementById('siteHeader');
-  if (header) {
-    window.addEventListener('scroll', () => {
-      header.classList.toggle('is-scrolled', window.scrollY > 60);
-    }, { passive: true });
+function initLoadingAnimation() {
+  const loader = document.getElementById('siteLoader');
+  if (!loader) return;
+
+  if (sessionStorage.getItem('buluo_loaded')) {
+    loader.style.display = 'none';
+    return;
+  }
+  sessionStorage.setItem('buluo_loaded', '1');
+  document.body.style.overflow = 'hidden';
+
+  if (typeof gsap === 'undefined') {
+    setTimeout(() => { loader.style.display = 'none'; document.body.style.overflow = ''; }, 400);
+    return;
   }
 
-  /* Hero 入場動畫 */
-  const hero = document.querySelector('.hero');
-  if (hero) {
-    hero.classList.add('hero-init');
-    requestAnimationFrame(() => requestAnimationFrame(() => hero.classList.add('is-ready')));
+  const brand = loader.querySelector('.site-loader__brand');
+  const line  = loader.querySelector('.site-loader__line');
+
+  gsap.timeline({
+    onComplete() {
+      gsap.to(loader, {
+        opacity: 0, duration: 0.55, ease: 'power2.inOut',
+        onComplete() {
+          loader.style.display = 'none';
+          document.body.style.overflow = '';
+        }
+      });
+    }
+  })
+  .to(brand, { opacity: 1, y: 0, duration: 0.85, ease: 'power3.out' })
+  .to(line,  { scaleX: 1,  duration: 0.65, ease: 'power2.out' }, '-=0.25')
+  .to({},    { duration: 0.9 });  /* hold */
+}
+
+/* ============================================================
+   GSAP 動畫（ScrollTrigger + ScrollTrigger sections）
+   ============================================================ */
+function initGSAPAnimations() {
+  gsap.registerPlugin(ScrollTrigger);
+
+  /* ScrollTrigger 區塊 */
+  const groups = [
+    { sel: '.section-header',     from: { y: 40, opacity: 0 }, stagger: 0 },
+    { sel: '.category-card',      from: { y: 50, opacity: 0 }, stagger: 0.09 },
+    { sel: '.editorial__img-col', from: { x: -28, opacity: 0 }, stagger: 0 },
+    { sel: '.editorial__text-col',from: { x:  28, opacity: 0 }, stagger: 0 },
+    { sel: '.stat',               from: { y:  28, opacity: 0 }, stagger: 0.08 },
+    { sel: '.newsletter__text',   from: { y:  28, opacity: 0 }, stagger: 0 },
+    { sel: '.newsletter__form',   from: { y:  28, opacity: 0 }, stagger: 0 },
+    { sel: '.footer-brand',       from: { y:  20, opacity: 0 }, stagger: 0 },
+    { sel: '.footer-col',         from: { y:  20, opacity: 0 }, stagger: 0.07 },
+  ];
+
+  groups.forEach(({ sel, from, stagger }) => {
+    const els = [...document.querySelectorAll(sel)];
+    if (!els.length) return;
+    gsap.from(els, {
+      ...from,
+      duration: 0.95,
+      stagger,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: els[0],
+        start: 'top 88%',
+      }
+    });
+  });
+
+  /* ── 職人首選 特定動畫 ── */
+
+  /* 左大圖：scale(0.97→1) + fade */
+  const feLeft = document.querySelector('.fe-left');
+  if (feLeft) {
+    gsap.from(feLeft, {
+      opacity: 0,
+      scale: 0.97,
+      duration: 1.4,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: feLeft, start: 'top 85%' },
+    });
   }
 
-  /* IntersectionObserver 滾動淡入 */
+  /* 右欄上半：文案 + 縮圖 fade in */
+  const feUpper = document.querySelector('.fe-upper');
+  if (feUpper) {
+    gsap.from(feUpper, {
+      opacity: 0,
+      y: 28,
+      duration: 0.9,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: feUpper, start: 'top 88%' },
+    });
+  }
+
+  /* 縮圖：stagger */
+  const feThumbs = [...document.querySelectorAll('.fe-thumb')];
+  if (feThumbs.length) {
+    gsap.from(feThumbs, {
+      opacity: 0,
+      scale: 0.92,
+      duration: 0.65,
+      stagger: 0.09,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: feThumbs[0], start: 'top 90%' },
+    });
+  }
+
+  /* CRAFTSMAN：由下往上浮現，只在右欄底部 */
+  const feHeroType = document.getElementById('feHeroType');
+  if (feHeroType) {
+    gsap.from(feHeroType, {
+      opacity: 0,
+      y: 80,
+      duration: 1.4,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: feHeroType, start: 'top 95%' },
+    });
+  }
+}
+
+/* ============================================================
+   CSS IntersectionObserver fallback（無 GSAP 時使用）
+   ============================================================ */
+function initCSSAnimations() {
   if (!('IntersectionObserver' in window)) {
     document.querySelectorAll('.reveal').forEach(el => el.classList.add('is-visible'));
     return;
@@ -773,18 +1309,11 @@ function initScrollEffects() {
   }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
 
   const revealSelectors = [
-    '.section-header',
-    '.category-card',
-    '.fe-main',
-    '.fe-details',
-    '.fe-copy',
-    '.editorial__img-col',
-    '.editorial__text-col',
-    '.stat',
-    '.newsletter__text',
-    '.newsletter__form',
-    '.footer-brand',
-    '.footer-col',
+    '.section-header', '.category-card',
+    '.fe-left', '.fe-upper', '.fe-hero-type', '.fe-desc',
+    '.editorial__img-col', '.editorial__text-col',
+    '.stat', '.newsletter__text', '.newsletter__form',
+    '.footer-brand', '.footer-col',
   ];
 
   revealSelectors.forEach(sel => {
@@ -799,13 +1328,29 @@ function initScrollEffects() {
 }
 
 /* ============================================================
+   視覺動態：Header scroll + 動畫初始化入口
+   ============================================================ */
+function initScrollEffects() {
+
+  if (typeof gsap !== 'undefined') {
+    initGSAPAnimations();
+  } else {
+    initCSSAnimations();
+  }
+}
+
+/* ============================================================
    頁面偵測與初始化
    ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
   initHeader();
 
+  /* 會員 Header UI */
+  if (typeof Auth !== 'undefined') Auth.updateHeaderUI();
+
   const path = location.pathname;
   if (path.endsWith('index.html') || path === '/' || path.endsWith('/')) {
+    initLoadingAnimation();
     initIndex();
   }
   if (path.includes('shop.html')) {

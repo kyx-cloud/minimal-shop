@@ -130,4 +130,51 @@ router.get('/customers', requireAdmin, (req, res) => {
   res.json({ success: true, data: customers });
 });
 
+/* ── 數據統計 ──────────────────────────────────────────── */
+
+router.get('/stats', requireAdmin, (req, res) => {
+  const today  = new Date().toISOString().split('T')[0];
+  const orders = db.data.orders   || [];
+  const prods  = db.data.products || [];
+
+  const todayOrders  = orders.filter(o => o.created_at?.startsWith(today));
+  const todayRev     = todayOrders
+    .filter(o => o.payment_status === '已付款')
+    .reduce((s, o) => s + (o.total || 0), 0);
+  const totalRev     = orders
+    .filter(o => o.payment_status === '已付款')
+    .reduce((s, o) => s + (o.total || 0), 0);
+
+  /* 熱門商品（依銷售數量） */
+  const sales = {};
+  orders.forEach(o =>
+    (o.items || []).forEach(item => {
+      sales[item.name] = (sales[item.name] || 0) + (item.quantity || 0);
+    })
+  );
+  const hotProducts = Object.entries(sales)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([name, qty]) => ({ name, qty }));
+
+  /* 最近訂單 */
+  const recentOrders = [...orders]
+    .sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''))
+    .slice(0, 8);
+
+  res.json({
+    success: true,
+    data: {
+      today_orders:   todayOrders.length,
+      today_revenue:  todayRev,
+      total_orders:   orders.length,
+      total_revenue:  totalRev,
+      product_count:  prods.length,
+      low_stock:      prods.filter(p => p.stock_count > 0 && p.stock_count <= 5),
+      hot_products:   hotProducts,
+      recent_orders:  recentOrders,
+    }
+  });
+});
+
 export default router;

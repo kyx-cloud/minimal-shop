@@ -12,6 +12,7 @@ import { fileURLToPath } from 'url';
 import productsRouter from './routes/products.js';
 import ordersRouter   from './routes/orders.js';
 import adminRouter    from './routes/admin.js';
+import authRouter     from './routes/auth.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const app  = express();
@@ -24,6 +25,7 @@ app.use(express.json());
 app.use('/api/products', productsRouter);
 app.use('/api/orders',   ordersRouter);
 app.use('/api/admin',    adminRouter);
+app.use('/api/auth',     authRouter);
 
 /* 靜態檔案（前台 + 後台） */
 app.use(express.static(join(__dirname, '..')));

@@ -6,7 +6,7 @@
 html { font-size: 15px; -webkit-font-smoothing: antialiased; }
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  background: #F8F7F4;
+  background: #F6F7F7;
   color: #111;
   min-height: 100vh;
 }
@@ -19,9 +19,9 @@ input, select, textarea { font: inherit; }
   --sidebar-w:  240px;
   --topbar-h:   60px;
   --content-pad: 32px;
-  --border:     #E8E8E4;
-  --border-lt:  #F0EFEA;
-  --bg:         #F8F7F4;
+  --border:     #E0E2E3;
+  --border-lt:  #EDEEEF;
+  --bg:         #F6F7F7;
   --bg-white:   #ffffff;
   --text:       #111111;
   --text-2:     #555555;
@@ -247,7 +247,7 @@ input, select, textarea { font: inherit; }
   text-align: left;
   padding: 11px 18px;
   border-bottom: 1px solid var(--border);
-  background: #FAFAF8;
+  background: #F6F7F7;
   white-space: nowrap;
 }
 .data-table td {
@@ -258,7 +258,7 @@ input, select, textarea { font: inherit; }
 }
 .data-table tr:last-child td { border-bottom: none; }
 .data-table tbody tr { transition: background 0.1s; }
-.data-table tbody tr:hover td { background: #FAFAF8; }
+.data-table tbody tr:hover td { background: #F6F7F7; }
 
 /* ── Badges ──────────────────────────────────────────────── */
 .badge {
@@ -329,7 +329,7 @@ input, select, textarea { font: inherit; }
   white-space: nowrap;
 }
 .filter-tab:last-child { border-right: none; }
-.filter-tab:hover  { color: var(--text); background: #F8F7F4; }
+.filter-tab:hover  { color: var(--text); background: #F4F5F5; }
 .filter-tab.active { background: #111; color: #fff; }
 
 /* ── Form Controls ───────────────────────────────────────── */

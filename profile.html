@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>會員中心 — 布落之處</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .profile-wrap {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 72px var(--pad) 120px;
+    }
+    .profile-head {
+      margin-bottom: 56px;
+      border-bottom: 1px solid var(--c-border-lt);
+      padding-bottom: 32px;
+    }
+    .profile-head__eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--c-text-3);
+      margin-bottom: 6px;
+    }
+    .profile-head__name {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-weight: 300;
+      letter-spacing: -0.03em;
+    }
+    .profile-layout {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 72px;
+      align-items: start;
+    }
+    .profile-nav {
+      position: sticky;
+      top: calc(var(--header-h) + 28px);
+    }
+    .profile-nav__item {
+      display: block;
+      width: 100%;
+      text-align: left;
+      padding: 14px 0;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      color: var(--c-text-3);
+      background: none;
+      border: none;
+      border-bottom: 1px solid var(--c-border-lt);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .profile-nav__item:first-child { border-top: 1px solid var(--c-border-lt); }
+    .profile-nav__item.is-active { color: var(--c-text); font-weight: 500; }
+    .profile-nav__item:hover { color: var(--c-text); }
+    /* Tabs */
+    .profile-tab { display: none; }
+    .profile-tab.is-active { display: block; }
+    /* Form */
+    .pf-section { margin-bottom: 56px; }
+    .pf-section__label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--c-text-3);
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--c-border-lt);
+      margin-bottom: 32px;
+      display: block;
+    }
+    .pf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; }
+    .pf-field { margin-bottom: 28px; }
+    .pf-field--full { grid-column: 1/-1; }
+    .pf-label {
+      display: block;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--c-text-3);
+      margin-bottom: 10px;
+    }
+    .pf-input {
+      width: 100%;
+      border: none;
+      border-bottom: 1px solid var(--c-border);
+      padding: 10px 0;
+      font-size: 14px;
+      font-family: inherit;
+      color: var(--c-text);
+      background: transparent;
+      outline: none;
+      transition: border-color 0.25s;
+    }
+    .pf-input:focus { border-bottom-color: var(--c-text); }
+    .pf-input::placeholder { color: var(--c-text-3); }
+    .pf-input[readonly] { opacity: 0.5; cursor: not-allowed; }
+    .pf-msg {
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 20px;
+      padding: 12px 0;
+    }
+    .pf-msg--ok  { color: #2e7d32; }
+    .pf-msg--err { color: #b91c1c; }
+    /* Orders */
+    .order-list { border-top: 1px solid var(--c-border-lt); }
+    .order-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px 24px;
+      align-items: center;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--c-border-lt);
+    }
+    .order-num  { font-size: 13px; font-weight: 500; letter-spacing: 0.04em; margin-bottom: 4px; }
+    .order-meta { font-size: 12px; color: var(--c-text-3); }
+    .order-total{ font-size: 14px; font-weight: 500; text-align: right; }
+    .order-badge{
+      display: inline-block;
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      padding: 3px 9px;
+      border-radius: 999px;
+      margin-top: 6px;
+      text-align: right;
+    }
+    /* Wishlist grid */
+    .wishlist-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px 20px; }
+    .tab-empty {
+      padding: 72px 0;
+      text-align: center;
+      color: var(--c-text-3);
+      font-size: 13px;
+      line-height: 2;
+    }
+    .tab-empty a { color: var(--c-text); text-decoration: underline; }
+    /* Mobile */
+    @media (max-width: 800px) {
+      .profile-layout { grid-template-columns: 1fr; gap: 0; }
+      .profile-nav {
+        position: static;
+        display: flex;
+        border-top: 1px solid var(--c-border-lt);
+        border-bottom: 1px solid var(--c-border-lt);
+        margin-bottom: 40px;
+      }
+      .profile-nav__item { flex: 1; border-top: none; border-bottom: none; text-align: center; padding: 14px 6px; }
+      .profile-nav__item:first-child { border-top: none; }
+      .pf-grid { grid-template-columns: 1fr; }
+      .wishlist-grid { grid-template-columns: 1fr 1fr; gap: 20px 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header" id="siteHeader">
+    <div class="header-container">
+      <button class="menu-btn" id="menuBtn" aria-label="開啟選單" aria-expanded="false">
+        <span class="menu-btn__bar"></span>
+        <span class="menu-btn__bar"></span>
+        <span class="menu-btn__bar"></span>
+      </button>
+      <a href="index.html" class="site-logo">
+        <span class="site-logo__text">布落之處</span>
+      </a>
+      <nav class="site-nav">
+        <a href="index.html" class="site-nav__link">首頁</a>
+        <a href="shop.html" class="site-nav__link">商品</a>
+        <a href="profile.html" class="site-nav__link is-active">會員</a>
+      </nav>
+      <div class="header-actions">
+        <a href="cart.html" class="icon-btn" aria-label="購物車">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+            <line x1="3" y1="6" x2="21" y2="6"/>
+            <path d="M16 10a4 4 0 0 1-8 0"/>
+          </svg>
+          <span class="cart-count is-hidden" id="cartCount">0</span>
+        </a>
+        <!-- 登出按鈕 -->
+        <button class="icon-btn" id="logoutBtn" title="登出" data-auth="member" style="display:none;color:var(--c-text-3)">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="mobile-menu" id="mobileMenu">
+      <nav class="mobile-menu__nav">
+        <a href="index.html" class="mobile-menu__link">首頁</a>
+        <a href="shop.html" class="mobile-menu__link">商品</a>
+        <a href="profile.html" class="mobile-menu__link">會員中心</a>
+        <button class="mobile-menu__link" id="mobileLogoutBtn"
+          style="text-align:left;background:none;border:none;font:inherit;cursor:pointer;width:100%;padding-left:0">
+          登出
+        </button>
+      </nav>
+    </div>
+    <div class="menu-overlay" id="menuOverlay"></div>
+  </header>
+
+  <main>
+    <div class="profile-wrap">
+      <div class="profile-head">
+        <p class="profile-head__eyebrow">會員中心</p>
+        <h1 class="profile-head__name" id="profileName">歡迎回來</h1>
+      </div>
+
+      <div class="profile-layout">
+
+        <!-- ── 側邊導覽 ── -->
+        <nav class="profile-nav">
+          <button class="profile-nav__item is-active" data-tab="info">個人資料</button>
+          <button class="profile-nav__item" data-tab="orders">我的訂單</button>
+          <button class="profile-nav__item" data-tab="wishlist">收藏清單</button>
+        </nav>
+
+        <!-- ── 內容區 ── -->
+        <div class="profile-content">
+
+          <!-- Tab: 個人資料 -->
+          <div class="profile-tab is-active" id="tab-info">
+            <div class="pf-section">
+              <span class="pf-section__label">基本資料</span>
+              <div id="profileMsg" class="pf-msg" style="display:none"></div>
+              <div class="pf-grid">
+                <div class="pf-field">
+                  <label class="pf-label" for="pfName">姓名</label>
+                  <input class="pf-input" type="text" id="pfName" placeholder="您的姓名">
+                </div>
+                <div class="pf-field">
+                  <label class="pf-label" for="pfEmail">電子信箱（不可修改）</label>
+                  <input class="pf-input" type="email" id="pfEmail" readonly>
+                </div>
+                <div class="pf-field">
+                  <label class="pf-label" for="pfPhone">聯絡電話</label>
+                  <input class="pf-input" type="tel" id="pfPhone" placeholder="0912-345-678">
+                </div>
+                <div class="pf-field pf-field--full">
+                  <label class="pf-label" for="pfAddr">收件地址</label>
+                  <input class="pf-input" type="text" id="pfAddr" placeholder="縣市・區域・街道地址">
+                </div>
+              </div>
+              <button class="btn btn--primary" id="saveBtn">儲存變更</button>
+            </div>
+
+            <div class="pf-section">
+              <span class="pf-section__label">修改密碼</span>
+              <div id="pwMsg" class="pf-msg" style="display:none"></div>
+              <div class="pf-grid">
+                <div class="pf-field">
+                  <label class="pf-label" for="pfOldPw">目前密碼</label>
+                  <input class="pf-input" type="password" id="pfOldPw" placeholder="••••••••">
+                </div>
+                <div class="pf-field">
+                  <label class="pf-label" for="pfNewPw">新密碼</label>
+                  <input class="pf-input" type="password" id="pfNewPw" placeholder="至少 6 個字元">
+                </div>
+              </div>
+              <button class="btn btn--outline" id="changePwBtn">更新密碼</button>
+            </div>
+          </div>
+
+          <!-- Tab: 我的訂單 -->
+          <div class="profile-tab" id="tab-orders">
+            <div id="ordersContent">
+              <p style="color:var(--c-text-3);font-size:13px">載入中…</p>
+            </div>
+          </div>
+
+          <!-- Tab: 收藏清單 -->
+          <div class="profile-tab" id="tab-wishlist">
+            <div id="wishlistContent">
+              <p style="color:var(--c-text-3);font-size:13px">載入中…</p>
+            </div>
+          </div>
+
+        </div><!-- /.profile-content -->
+      </div><!-- /.profile-layout -->
+    </div><!-- /.profile-wrap -->
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom">
+        <p>&copy; 2024 布落之處. All rights reserved.</p>
+        <div class="footer-bottom__links">
+          <a href="index.html">首頁</a>
+          <a href="shop.html">商品</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="auth.js"></script>
+  <script src="script.js"></script>
+  <script>
+    /* ── 需要登入 ── */
+    if (!Auth.requireAuth()) { /* 已自動跳轉 */ }
+
+    /* ── 填入用戶資料 ── */
+    let u = Auth.getUser();
+    function fillUser(user) {
+      if (!user) return;
+      u = user;
+      document.getElementById('profileName').textContent  = `歡迎回來，${user.name}`;
+      document.getElementById('pfName').value    = user.name    || '';
+      document.getElementById('pfEmail').value   = user.email   || '';
+      document.getElementById('pfPhone').value   = user.phone   || '';
+      document.getElementById('pfAddr').value    = user.address || '';
+    }
+    fillUser(u);
+    Auth.refreshProfile().then(fillUser);  // 背景刷新
+
+    /* ── Tab 切換 ── */
+    document.querySelectorAll('.profile-nav__item').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.profile-nav__item').forEach(b => b.classList.remove('is-active'));
+        document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('is-active'));
+        btn.classList.add('is-active');
+        document.getElementById(`tab-${btn.dataset.tab}`).classList.add('is-active');
+        if (btn.dataset.tab === 'orders')   loadOrders();
+        if (btn.dataset.tab === 'wishlist') loadWishlist();
+      });
+    });
+
+    /* hash 直接進入 Tab */
+    const hashTab = location.hash?.slice(1);
+    if (['orders', 'wishlist'].includes(hashTab))
+      document.querySelector(`[data-tab="${hashTab}"]`)?.click();
+
+    /* ── 儲存個人資料 ── */
+    document.getElementById('saveBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('saveBtn');
+      const msg = document.getElementById('profileMsg');
+      btn.textContent = '儲存中…'; btn.disabled = true;
+      const d = await Auth.updateProfile({
+        name:    document.getElementById('pfName').value,
+        phone:   document.getElementById('pfPhone').value,
+        address: document.getElementById('pfAddr').value,
+      });
+      msg.style.display  = 'block';
+      msg.className      = `pf-msg pf-msg--${d.success ? 'ok' : 'err'}`;
+      msg.textContent    = d.success ? '✓ 資料已成功儲存' : d.message;
+      if (d.success) fillUser(d.data);
+      btn.textContent = '儲存變更'; btn.disabled = false;
+      setTimeout(() => { msg.style.display = 'none'; }, 3500);
+    });
+
+    /* ── 修改密碼 ── */
+    document.getElementById('changePwBtn').addEventListener('click', async () => {
+      const btn = document.getElementById('changePwBtn');
+      const msg = document.getElementById('pwMsg');
+      btn.textContent = '更新中…'; btn.disabled = true;
+      const d = await Auth.changePassword(
+        document.getElementById('pfOldPw').value,
+        document.getElementById('pfNewPw').value
+      );
+      msg.style.display  = 'block';
+      msg.className      = `pf-msg pf-msg--${d.success ? 'ok' : 'err'}`;
+      msg.textContent    = d.success ? '✓ 密碼已成功更新' : d.message;
+      if (d.success) { document.getElementById('pfOldPw').value = ''; document.getElementById('pfNewPw').value = ''; }
+      btn.textContent = '更新密碼'; btn.disabled = false;
+      setTimeout(() => { msg.style.display = 'none'; }, 3500);
+    });
+
+    /* ── 訂單 ── */
+    const STATUS_COLORS = {
+      '待付款':'#E65100','已付款':'#2E7D32','處理中':'#1565C0',
+      '已出貨':'#6A1B9A','已完成':'#388E3C','已取消':'#757575'
+    };
+    const STATUS_BG = {
+      '待付款':'#FFF3E0','已付款':'#E8F5E9','處理中':'#E3F2FD',
+      '已出貨':'#F3E5F5','已完成':'#E8F5E9','已取消':'#F5F5F5'
+    };
+    async function loadOrders() {
+      const el = document.getElementById('ordersContent');
+      el.innerHTML = '<p style="color:var(--c-text-3);font-size:13px">載入訂單中…</p>';
+      try {
+        const d = await Auth.apiFetch('GET', '/api/auth/orders');
+        if (!d.success) throw new Error(d.message);
+        if (!d.data.length) {
+          el.innerHTML = `<div class="tab-empty">目前沒有任何訂單。<br><a href="shop.html">去逛逛</a></div>`;
+          return;
+        }
+        el.innerHTML = `<div class="order-list">
+          ${d.data.map(o => `
+            <div class="order-row">
+              <div>
+                <p class="order-num">${o.order_number}</p>
+                <p class="order-meta">
+                  ${new Date(o.created_at).toLocaleDateString('zh-TW')}
+                  &ensp;·&ensp; ${(o.items || []).reduce((s, i) => s + i.quantity, 0)} 件商品
+                </p>
+              </div>
+              <div style="text-align:right">
+                <p class="order-total">NT$ ${Number(o.total).toLocaleString()}</p>
+                <span class="order-badge" style="color:${STATUS_COLORS[o.order_status]||'#666'};background:${STATUS_BG[o.order_status]||'#f5f5f5'}">
+                  ${o.order_status}
+                </span>
+              </div>
+            </div>`).join('')}
+        </div>`;
+      } catch (e) {
+        el.innerHTML = `<div class="tab-empty" style="color:#b91c1c">${e.message}</div>`;
+      }
+    }
+
+    /* ── 收藏 ── */
+    async function loadWishlist() {
+      const el   = document.getElementById('wishlistContent');
+      const list = Auth.getWishlist();
+      if (!list.length) {
+        el.innerHTML = `<div class="tab-empty">收藏清單是空的。<br><a href="shop.html">去探索商品</a></div>`;
+        return;
+      }
+      try {
+        const API = location.protocol === 'file:' ? 'http://localhost:3001' : '';
+        const r   = await fetch(`${API}/api/products`);
+        const d   = await r.json();
+        if (!d.success) throw new Error('無法載入商品資料');
+        const favs = (d.data || []).filter(p => list.includes(p.id));
+        if (!favs.length) {
+          el.innerHTML = `<div class="tab-empty">收藏的商品暫無資料。</div>`;
+          return;
+        }
+        el.innerHTML = `<div class="wishlist-grid">
+          ${favs.map(p => `
+            <div class="product-card">
+              <a href="product.html?id=${p.id}" class="product-card__inner">
+                <div class="product-card__img-wrap">
+                  <img class="product-card__img" src="${p.images?.[0] || ''}" alt="${p.name}" loading="lazy">
+                </div>
+                <div class="product-card__info">
+                  <span class="product-card__cat">${p.category}</span>
+                  <p class="product-card__name">${p.name}</p>
+                  <p class="product-card__price">NT$ ${Number(p.price).toLocaleString()}</p>
+                </div>
+              </a>
+            </div>`).join('')}
+        </div>`;
+      } catch (e) {
+        el.innerHTML = `<div class="tab-empty" style="color:#b91c1c">${e.message}</div>`;
+      }
+    }
+
+    /* ── 登出 ── */
+    document.getElementById('logoutBtn')?.addEventListener('click', () => Auth.logout());
+    document.getElementById('mobileLogoutBtn')?.addEventListener('click', () => Auth.logout());
+
+    Auth.updateHeaderUI();
+  </script>
+</body>
+</html>

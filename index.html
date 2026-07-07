@@ -10,7 +10,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-hero>
 
   <!-- ===== HEADER ===== -->
   <header class="site-header" id="siteHeader">
@@ -31,6 +31,13 @@
         <a href="shop.html" class="site-nav__link">商品</a>
         <a href="#editorial" class="site-nav__link">關於</a>
         <a href="#newsletter" class="site-nav__link">聯絡</a>
+        <a href="login.html" class="site-nav__link" data-auth="guest" style="font-size:11px;letter-spacing:0.1em;text-transform:uppercase">登入</a>
+        <!-- 已登入 -->
+        <a href="profile.html" class="icon-btn" data-auth="member" style="display:none" title="會員中心" aria-label="我的帳戶">
+          <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+        </a>
       </nav>
 
       <div class="header-actions">
@@ -39,6 +46,8 @@
             <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
           </svg>
         </button>
+  
+      
         <a href="cart.html" class="icon-btn cart-icon" aria-label="購物車">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>
@@ -67,6 +76,8 @@
         <a href="shop.html" class="mobile-menu__link">商品</a>
         <a href="#editorial" class="mobile-menu__link">關於</a>
         <a href="#newsletter" class="mobile-menu__link">聯絡</a>
+        <a href="login.html" class="mobile-menu__link" data-auth="guest">登入 / 加入會員</a>
+        <a href="profile.html" class="mobile-menu__link" data-auth="member" style="display:none">我的帳戶</a>
       </nav>
       <div class="mobile-menu__footer">
         <a href="cart.html" class="mobile-menu__link">購物車</a>
@@ -75,22 +86,67 @@
     <div class="menu-overlay" id="menuOverlay"></div>
   </header>
 
+  <!-- ===== 品牌載入動畫 ===== -->
+  <div id="siteLoader" class="site-loader" aria-hidden="true">
+    <div class="site-loader__inner" id="loaderInner">
+      <p class="site-loader__brand">布落之處</p>
+      <span class="site-loader__line" id="loaderLine"></span>
+    </div>
+  </div>
+
   <main>
 
-    <!-- ===== HERO ===== -->
-    <section class="hero">
-      <div class="hero__text">
-        <span class="hero__label">紡織工藝專門店</span>
-        <h1 class="hero__title">為每一針，<br>留下精準<br>的落點。</h1>
-        <p class="hero__desc">精選頂級紡織零件，從縫紉機配件到專業針具，為每一位工藝職人提供最可靠的工具。</p>
-        <div class="hero__actions">
-          <a href="shop.html" class="btn btn--primary">探索商品</a>
-          <a href="#editorial" class="btn btn--link">品牌故事 →</a>
+    <!-- ===== HERO CAROUSEL ===== -->
+    <section class="hero-carousel" id="heroCarousel" aria-label="精選商品輪播">
+
+      <div class="hc-grid">
+
+        <!-- LEFT COLUMN: current slide -->
+        <div class="hc-col hc-col--left">
+          <div class="hc-ghost-num" id="hcGhostNum" aria-hidden="true">001</div>
+          <div class="hc-product" id="hcProduct">
+            <img id="hcProductImg" src="images/no-05.png" alt="不鏽鋼壓布腳" loading="eager">
+          </div>
+          <div class="hc-left" id="hcLeft">
+            <span class="hc-label" id="hcLabel">壓布腳</span>
+            <h1 class="hc-title" id="hcTitle">
+              <span class="tl"><span class="tc">不鏽鋼</span></span>
+              <span class="tl"><span class="tc">壓布腳</span></span>
+            </h1>
+            <p class="hc-desc" id="hcDesc">304 不鏽鋼精密鑄造，光滑底部確保布料順暢送進，適用大多數家用縫紉機型號。</p>
+            <a href="shop.html" class="hc-btn" id="hcBtn">Explore Product</a>
+          </div>
         </div>
+
+        <!-- RIGHT COLUMN: next slide preview (click to advance) -->
+        <div class="hc-col hc-col--right" id="hcPanel" role="button" tabindex="0" aria-label="下一個商品">
+          <div class="hc-panel-ghost" id="hcPanelGhost" aria-hidden="true">002</div>
+          <div class="hc-preview" id="hcPreview">
+            <img id="hcPreviewImg" src="images/no-06.png" alt="下一個商品預覽">
+          </div>
+          <div class="hc-panel-info" id="hcPanelInfo">
+            <span class="hc-label" id="hcPanelCat">針具</span>
+            <h2 class="hc-title" id="hcPanelName">
+              <span class="tl"><span class="tc">通用縫紉針</span></span>
+            </h2>
+            <p class="hc-desc" id="hcPanelDesc">適配各式家用縫紉機，10 入組精裝，針尖銳利持久。</p>
+            <span class="hc-panel-arrow">Next &nbsp;→</span>
+            <span class="hc-panel-num" id="hcPanelNum">NO.002</span>
+          </div>
+        </div>
+
       </div>
-      <div class="hero__image">
-        <img src="images/hero1.jpg" alt="精選紡織零件" loading="eager">
-      </div>
+
+      <!-- Navigation arrows -->
+      <button class="hc-arrow hc-arrow--prev" id="hcPrev" aria-label="上一個">&#8592;</button>
+      <button class="hc-arrow hc-arrow--next" id="hcNext" aria-label="下一個">&#8594;</button>
+
+      <!-- Slide counter -->
+      <span class="hc-counter" id="hcCounter">001 / 005</span>
+
+      <!-- Pagination (built by JS) -->
+      <div class="hc-pagination" id="hcPagination" role="tablist" aria-label="輪播分頁"></div>
+
     </section>
 
     <!-- ===== 跑馬燈 ===== -->
@@ -172,56 +228,86 @@
       </div>
     </section>
 
-    <!-- ===== 精選商品 Editorial ===== -->
+    <!-- ===== 職人首選 ===== -->
     <section class="featured-editorial">
+      <div class="fe-grid">
 
-      <div class="fe-body">
-
-        <!-- 左：主視覺 -->
-        <a href="product.html?id=1" class="fe-main">
-          <img src="images/product-05.jpg" alt="不鏽鋼壓布腳" loading="lazy">
-          <div class="fe-main__meta">
-            <span class="fe-main__name">不鏽鋼壓布腳</span>
-            <span class="fe-main__price">NT$ 480</span>
-          </div>
-        </a>
-
-        <!-- 右：細節圖 + 文案 -->
-        <div class="fe-aside">
-
-          <!-- 3 張細節圖 -->
-          <div class="fe-details">
-            <a href="product.html?id=2" class="fe-detail">
-              <img src="images/product-06.jpg" alt="通用縫紉針" loading="lazy">
-            </a>
-            <a href="product.html?id=3" class="fe-detail">
-              <img src="images/product-07.jpg" alt="精密梭殼" loading="lazy">
-            </a>
-            <a href="product.html?id=4" class="fe-detail">
-              <img src="images/product-08.jpg" alt="棉質縫紉線" loading="lazy">
-            </a>
-          </div>
-
-          <!-- 品牌文字 -->
-          <div class="fe-copy">
-            <p class="fe-copy__num">No. 01 — 05</p>
-            <p class="fe-copy__text">每一件工具，都是精密工藝的結晶。我們為台灣縫紉職人嚴選每一款零件，從材質到精度，確保使用時帶來穩定精準的體驗。</p>
-            <a href="shop.html" class="fe-copy__link">探索全部商品 →</a>
-          </div>
-
+        <!-- ── 左欄：大圖，貼齊容器左緣 ── -->
+        <div class="fe-left">
+          <img class="fe-main-img" id="feMainImg"
+               src="images/product-05.jpg"
+               alt="不鏽鋼壓布腳"
+               loading="eager">
         </div>
-      </div>
 
-      <!-- 超大裁切標題 -->
-      <div class="fe-headline" aria-hidden="true">CRAFTSMAN</div>
+        <!-- ── 右欄：上半(文字+縮圖) + 下半(CRAFTSMAN) ── -->
+        <div class="fe-right">
 
+          <!-- 右欄上半：文字介紹(左) + 2×2 縮圖(右) -->
+          <div class="fe-upper">
+
+            <div class="fe-desc">
+              <p class="fe-desc__num">No. 01 — 05</p>
+              <p class="fe-desc__body">每一件工具，都是精密工藝的結晶。我們為台灣縫紉職人嚴選每一款零件，從材質到精度，確保使用時帶來穩定精準的體驗。</p>
+              <a href="shop.html" class="fe-desc__link">Explore Products</a>
+            </div>
+
+            <div class="fe-thumbs" id="feThumbs">
+              <button class="fe-thumb is-active" data-src="images/product-05.jpg" data-alt="不鏽鋼壓布腳" aria-pressed="true">
+                <img src="images/product-05.jpg" alt="不鏽鋼壓布腳" loading="lazy">
+              </button>
+              <button class="fe-thumb" data-src="images/product-06.jpg" data-alt="通用縫紉針" aria-pressed="false">
+                <img src="images/product-06.jpg" alt="通用縫紉針" loading="lazy">
+              </button>
+              <button class="fe-thumb" data-src="images/product-07.jpg" data-alt="精密梭殼" aria-pressed="false">
+                <img src="images/product-07.jpg" alt="精密梭殼" loading="lazy">
+              </button>
+              <button class="fe-thumb" data-src="images/product-08.jpg" data-alt="棉質縫紉線" aria-pressed="false">
+                <img src="images/product-08.jpg" alt="棉質縫紉線" loading="lazy">
+              </button>
+            </div>
+
+          </div><!-- /.fe-upper -->
+
+          <!-- 右欄下半：CRAFTSMAN，只在右欄底部 -->
+          <div class="fe-lower">
+            <div class="fe-hero-type" id="feHeroType" aria-hidden="true">CRAFTSMAN</div>
+          </div>
+
+        </div><!-- /.fe-right -->
+
+      </div><!-- /.fe-grid -->
     </section>
 
+    <!-- ===== 數據展示 ===== -->
+    <div class="stats-bar">
+        <div class="container">
+          <div class="stats-grid">
+            <div class="stat">
+              <span class="stat__num">500+</span>
+              <span class="stat__label">精選商品</span>
+            </div>
+            <div class="stat">
+              <span class="stat__num">10,000+</span>
+              <span class="stat__label">滿意客戶</span>
+            </div>
+            <div class="stat">
+              <span class="stat__num">5+</span>
+              <span class="stat__label">年品牌歷史</span>
+            </div>
+            <div class="stat">
+              <span class="stat__num">30+</span>
+              <span class="stat__label">合作品牌</span>
+            </div>
+          </div>
+        </div>
+      </div>
+  
     <!-- ===== 品牌理念 ===== -->
     <section class="editorial" id="editorial">
       <div class="editorial__inner">
         <div class="editorial__img-col">
-          <img src="images/logo-03.jpg" alt="布落之處品牌故事" loading="lazy">
+          <img src="images/hero1.jpg" alt="布落之處品牌故事" loading="lazy">
         </div>
         <div class="editorial__text-col">
           <span class="section-label">關於布落之處</span>
@@ -234,30 +320,6 @@
         </div>
       </div>
     </section>
-
-    <!-- ===== 數據展示 ===== -->
-    <div class="stats-bar">
-      <div class="container">
-        <div class="stats-grid">
-          <div class="stat">
-            <span class="stat__num">500+</span>
-            <span class="stat__label">精選商品</span>
-          </div>
-          <div class="stat">
-            <span class="stat__num">10,000+</span>
-            <span class="stat__label">滿意客戶</span>
-          </div>
-          <div class="stat">
-            <span class="stat__num">5+</span>
-            <span class="stat__label">年品牌歷史</span>
-          </div>
-          <div class="stat">
-            <span class="stat__num">30+</span>
-            <span class="stat__label">合作品牌</span>
-          </div>
-        </div>
-      </div>
-    </div>
 
     <!-- ===== 電子報訂閱 ===== -->
     <section class="newsletter section" id="newsletter">
@@ -361,6 +423,10 @@
     </div>
   </footer>
 
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="auth.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
