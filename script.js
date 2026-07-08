@@ -374,8 +374,17 @@ function initFeaturedEditorial() {
       mainImg.src = src;
       mainImg.alt = activeThumb.dataset.alt || '';
 
-      /* Sync hero type background to match current image */
-      if (heroType) heroType.style.backgroundImage = `url(${src})`;
+      /* Sync word text and background image to current product */
+      if (heroType) {
+        heroType.textContent = activeThumb.dataset.word || 'CRAFTSMAN';
+        heroType.style.backgroundImage = `url(${src})`;
+        /* Re-apply background-clip: text — prevents Safari/Chrome repaint bug
+           where clip effect disappears after inline backgroundImage change */
+        heroType.style.webkitBackgroundClip = 'text';
+        heroType.style.backgroundClip = 'text';
+        heroType.style.webkitTextFillColor = 'transparent';
+        heroType.style.color = 'transparent';
+      }
 
       /* Fade in */
       mainImg.classList.remove('is-switching');
@@ -787,6 +796,8 @@ function initHeroCarousel() {
 function initIndex() {
   initHeroCarousel();
   initFeaturedEditorial();
+  initImageMouseEffect();
+  /* initFloatingProducts is triggered by scroll via initGSAPAnimations */
 
   /* Newsletter */
   const form = document.getElementById('newsletterForm');
@@ -794,6 +805,53 @@ function initIndex() {
     e.preventDefault();
     showToast('感謝訂閱！我們會將最新消息傳送至您的信箱。');
     form.reset();
+  });
+}
+
+/* ── Floating products GSAP yoyo animation (called after scroll reveal) ── */
+function initFloatingProducts() {
+  if (typeof gsap === 'undefined') return;
+
+  document.querySelectorAll('.fp-item').forEach((el) => {
+    const rotate = parseFloat(el.dataset.rotate ?? 0);
+    const floatY = parseFloat(el.dataset.fy ?? 12);
+    const speed  = parseFloat(el.dataset.fs ?? 4.5);
+    const delay  = -(speed * Math.random());
+    const rDelta = Math.random() > 0.5 ? 1.8 : -1.8;
+
+    gsap.set(el, { rotation: rotate });
+
+    gsap.to(el, {
+      y:        -floatY,
+      rotation: rotate + rDelta,
+      duration: speed,
+      ease:     'sine.inOut',
+      yoyo:     true,
+      repeat:   -1,
+      delay,
+    });
+
+    el.addEventListener('mouseenter', () =>
+      gsap.to(el, { scale: 1.08, duration: 0.4, ease: 'power2.out' }));
+    el.addEventListener('mouseleave', () =>
+      gsap.to(el, { scale: 1,    duration: 0.4, ease: 'power2.out' }));
+  });
+}
+
+/* ── Image 3D micro-rotation on mouse move ── */
+function initImageMouseEffect() {
+  document.querySelectorAll('.brand-phil__img-col').forEach(el => {
+    el.addEventListener('mousemove', (e) => {
+      const r = el.getBoundingClientRect();
+      const cx = r.left + r.width / 2;
+      const cy = r.top + r.height / 2;
+      const rx = ((e.clientY - cy) / r.height) * -6;
+      const ry = ((e.clientX - cx) / r.width) * 6;
+      el.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) scale(1.02)`;
+    });
+    el.addEventListener('mouseleave', () => {
+      el.style.transform = '';
+    });
   });
 }
 
@@ -1211,17 +1269,20 @@ function initLoadingAnimation() {
 function initGSAPAnimations() {
   gsap.registerPlugin(ScrollTrigger);
 
-  /* ScrollTrigger 區塊 */
+  /* ── Universal scroll reveal groups ── */
   const groups = [
-    { sel: '.section-header',     from: { y: 40, opacity: 0 }, stagger: 0 },
-    { sel: '.category-card',      from: { y: 50, opacity: 0 }, stagger: 0.09 },
-    { sel: '.editorial__img-col', from: { x: -28, opacity: 0 }, stagger: 0 },
-    { sel: '.editorial__text-col',from: { x:  28, opacity: 0 }, stagger: 0 },
-    { sel: '.stat',               from: { y:  28, opacity: 0 }, stagger: 0.08 },
-    { sel: '.newsletter__text',   from: { y:  28, opacity: 0 }, stagger: 0 },
-    { sel: '.newsletter__form',   from: { y:  28, opacity: 0 }, stagger: 0 },
-    { sel: '.footer-brand',       from: { y:  20, opacity: 0 }, stagger: 0 },
-    { sel: '.footer-col',         from: { y:  20, opacity: 0 }, stagger: 0.07 },
+    { sel: '.section-header',      from: { y: 48, opacity: 0, filter: 'blur(6px)' }, stagger: 0 },
+    { sel: '.category-card',       from: { y: 60, opacity: 0, filter: 'blur(5px)' }, stagger: 0.1 },
+    { sel: '.editorial__img-col',  from: { x: -40, opacity: 0, filter: 'blur(8px)' }, stagger: 0 },
+    { sel: '.editorial__text-col', from: { x:  40, opacity: 0, filter: 'blur(8px)' }, stagger: 0 },
+    { sel: '.newsletter__text',    from: { y:  36, opacity: 0, filter: 'blur(5px)' }, stagger: 0 },
+    { sel: '.newsletter__form',    from: { y:  36, opacity: 0, filter: 'blur(5px)' }, stagger: 0 },
+    { sel: '.footer-brand',        from: { y:  24, opacity: 0 }, stagger: 0 },
+    { sel: '.footer-col',          from: { y:  24, opacity: 0 }, stagger: 0.08 },
+    { sel: '.brand-phil__img-col', from: { x: -40, opacity: 0, filter: 'blur(8px)' }, stagger: 0 },
+    { sel: '.brand-phil__text-col',from: { x:  40, opacity: 0, filter: 'blur(6px)' }, stagger: 0 },
+    { sel: '.fc-product',          from: { x: -60, opacity: 0, filter: 'blur(8px)' }, stagger: 0 },
+    { sel: '.fc-info',             from: { y:  40, opacity: 0, filter: 'blur(5px)' }, stagger: 0 },
   ];
 
   groups.forEach(({ sel, from, stagger }) => {
@@ -1229,64 +1290,204 @@ function initGSAPAnimations() {
     if (!els.length) return;
     gsap.from(els, {
       ...from,
-      duration: 0.95,
+      duration: 1.1,
       stagger,
       ease: 'power3.out',
-      scrollTrigger: {
-        trigger: els[0],
-        start: 'top 88%',
-      }
+      scrollTrigger: { trigger: els[0], start: 'top 88%' },
     });
   });
 
-  /* ── 職人首選 特定動畫 ── */
+  /* ── Stats: count-up animation ── */
+  const statsBar = document.querySelector('.stats-bar');
+  if (statsBar) {
+    const statDefs = [
+      { el: document.querySelector('.stat:nth-child(1) .stat__num'), end: 500, suffix: '+' },
+      { el: document.querySelector('.stat:nth-child(2) .stat__num'), end: 10000, suffix: '+', thousands: true },
+      { el: document.querySelector('.stat:nth-child(3) .stat__num'), end: 5, suffix: '+' },
+      { el: document.querySelector('.stat:nth-child(4) .stat__num'), end: 30, suffix: '+' },
+    ];
+    let triggered = false;
+    ScrollTrigger.create({
+      trigger: statsBar,
+      start: 'top 80%',
+      onEnter() {
+        if (triggered) return;
+        triggered = true;
+        statDefs.forEach(({ el, end, suffix, thousands }) => {
+          if (!el) return;
+          const obj = { val: 0 };
+          gsap.to(obj, {
+            val: end,
+            duration: 2.2,
+            ease: 'power2.out',
+            onUpdate() {
+              const v = Math.round(obj.val);
+              el.textContent = (thousands ? v.toLocaleString('zh-TW') : v) + suffix;
+            },
+            onComplete() {
+              el.textContent = (thousands ? end.toLocaleString('zh-TW') : end) + suffix;
+            },
+          });
+        });
+        gsap.from([...document.querySelectorAll('.stat')], {
+          y: 32, opacity: 0, stagger: 0.1, duration: 0.9, ease: 'power3.out',
+        });
+      },
+    });
+  }
 
-  /* 左大圖：scale(0.97→1) + fade */
+  /* ── 職人首選 特定動畫 ── */
   const feLeft = document.querySelector('.fe-left');
   if (feLeft) {
     gsap.from(feLeft, {
-      opacity: 0,
-      scale: 0.97,
-      duration: 1.4,
-      ease: 'power3.out',
+      opacity: 0, scale: 0.96, filter: 'blur(8px)',
+      duration: 1.5, ease: 'power3.out',
       scrollTrigger: { trigger: feLeft, start: 'top 85%' },
     });
   }
 
-  /* 右欄上半：文案 + 縮圖 fade in */
   const feUpper = document.querySelector('.fe-upper');
   if (feUpper) {
     gsap.from(feUpper, {
-      opacity: 0,
-      y: 28,
-      duration: 0.9,
-      ease: 'power3.out',
+      opacity: 0, y: 32, filter: 'blur(5px)',
+      duration: 1, ease: 'power3.out',
       scrollTrigger: { trigger: feUpper, start: 'top 88%' },
     });
   }
 
-  /* 縮圖：stagger */
   const feThumbs = [...document.querySelectorAll('.fe-thumb')];
   if (feThumbs.length) {
     gsap.from(feThumbs, {
-      opacity: 0,
-      scale: 0.92,
-      duration: 0.65,
-      stagger: 0.09,
-      ease: 'power3.out',
+      opacity: 0, scale: 0.9,
+      duration: 0.7, stagger: 0.1, ease: 'power3.out',
       scrollTrigger: { trigger: feThumbs[0], start: 'top 90%' },
     });
   }
 
-  /* CRAFTSMAN：由下往上浮現，只在右欄底部 */
   const feHeroType = document.getElementById('feHeroType');
   if (feHeroType) {
     gsap.from(feHeroType, {
-      opacity: 0,
-      y: 80,
-      duration: 1.4,
-      ease: 'power3.out',
+      opacity: 0, y: 90,
+      duration: 1.5, ease: 'power3.out',
       scrollTrigger: { trigger: feHeroType, start: 'top 95%' },
+    });
+    /* parallax */
+    gsap.to(feHeroType, {
+      y: -80,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.featured-editorial',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1.2,
+      },
+    });
+  }
+
+  /* ── Parallax: fc-num-bg ── */
+  const fcNumBg = document.querySelector('.fc-num-bg');
+  if (fcNumBg) {
+    gsap.to(fcNumBg, {
+      y: -120,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: '.fc-section',
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1.5,
+      },
+    });
+    gsap.from(fcNumBg, {
+      opacity: 0, scale: 0.92,
+      duration: 1.8, ease: 'power3.out',
+      scrollTrigger: { trigger: '.fc-section', start: 'top 90%' },
+    });
+  }
+
+  /* ── fp-section: headline fade in ── */
+  const fpHeadline = document.querySelector('.fp-headline-block');
+  if (fpHeadline) {
+    gsap.from(fpHeadline, {
+      opacity: 0, y: 40, filter: 'blur(8px)',
+      duration: 1.1, ease: 'power3.out',
+      scrollTrigger: { trigger: '.fp-section', start: 'top 80%' },
+    });
+  }
+
+  /* ── fp-section: products stagger reveal → then start float ── */
+  const fpItems = [...document.querySelectorAll('.fp-item')];
+  if (fpItems.length) {
+    gsap.set(fpItems, { opacity: 0, y: 36, scale: 0.92 });
+    let floatStarted = false;
+    ScrollTrigger.create({
+      trigger: '.fp-section',
+      start: 'top 72%',
+      onEnter() {
+        gsap.to(fpItems, {
+          opacity: 1, y: 0, scale: 1,
+          stagger: { each: 0.13, from: 'random' },
+          duration: 0.95, ease: 'power2.out',
+          onComplete() {
+            if (!floatStarted) { floatStarted = true; initFloatingProducts(); }
+          },
+        });
+      },
+    });
+  } else {
+    /* fallback: start float immediately if no items */
+    initFloatingProducts();
+  }
+
+  /* ── fp-section: annotations stagger up ── */
+  const fpAnns = [...document.querySelectorAll('.fp-ann')];
+  if (fpAnns.length) {
+    gsap.from(fpAnns, {
+      opacity: 0, y: 20,
+      duration: 0.8, stagger: 0.14, ease: 'power2.out',
+      scrollTrigger: { trigger: '.fp-section', start: 'top 60%' },
+    });
+  }
+
+  /* ── fp-section: SVG lines draw in ── */
+  const fpLines = [...document.querySelectorAll('.fp-svglines line')];
+  if (fpLines.length) {
+    fpLines.forEach(line => {
+      const len = 120; /* approximate pixel length */
+      gsap.set(line, { strokeDasharray: len, strokeDashoffset: len });
+    });
+    gsap.to(fpLines, {
+      strokeDashoffset: 0,
+      duration: 0.7, stagger: 0.15, ease: 'power2.out',
+      scrollTrigger: { trigger: '.fp-section', start: 'top 62%' },
+    });
+  }
+
+  /* ── fp-section: watermark parallax ── */
+  const fpWm = document.querySelector('.fp-watermark');
+  if (fpWm) {
+    gsap.to(fpWm, {
+      y: -80, ease: 'none',
+      scrollTrigger: { trigger: '.fp-section', start: 'top bottom', end: 'bottom top', scrub: 1.5 },
+    });
+  }
+
+  /* ── bv-section: title fade up ── */
+  const bvTitle = document.querySelector('.bv-title');
+  if (bvTitle) {
+    gsap.from([document.querySelector('.bv-label'), bvTitle, document.querySelector('.bv-desc')].filter(Boolean), {
+      opacity: 0, y: 36, filter: 'blur(5px)',
+      duration: 1.0, stagger: 0.1, ease: 'power3.out',
+      scrollTrigger: { trigger: '.bv-section', start: 'top 82%' },
+    });
+  }
+
+  /* ── bv-section: cards stagger in from below ── */
+  const bvCards = [...document.querySelectorAll('.bv-card')];
+  if (bvCards.length) {
+    gsap.from(bvCards, {
+      opacity: 0, y: 48, filter: 'blur(4px)',
+      duration: 0.85, stagger: 0.1, ease: 'power3.out',
+      scrollTrigger: { trigger: '.bv-grid', start: 'top 84%' },
     });
   }
 }
@@ -1308,12 +1509,16 @@ function initCSSAnimations() {
     });
   }, { threshold: 0.08, rootMargin: '0px 0px -32px 0px' });
 
+  /* Fallback: make fp-items visible immediately and start float */
+  initFloatingProducts();
+
   const revealSelectors = [
     '.section-header', '.category-card',
-    '.fe-left', '.fe-upper', '.fe-hero-type', '.fe-desc',
     '.editorial__img-col', '.editorial__text-col',
     '.stat', '.newsletter__text', '.newsletter__form',
     '.footer-brand', '.footer-col',
+    '.brand-phil__img-col', '.brand-phil__text-col',
+    '.fp-headline-block', '.fp-ann', '.bv-card',
   ];
 
   revealSelectors.forEach(sel => {
@@ -1331,6 +1536,21 @@ function initCSSAnimations() {
    視覺動態：Header scroll + 動畫初始化入口
    ============================================================ */
 function initScrollEffects() {
+  const header = document.getElementById('siteHeader');
+  if (header) {
+    const heroEl = document.getElementById('heroCarousel');
+    if (heroEl) {
+      /* 首頁：監聽 scroll，超過 80px 後切換 .scrolled */
+      const onScroll = () => {
+        header.classList.toggle('scrolled', window.scrollY > 80);
+      };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll(); /* 初始化立即執行一次 */
+    } else {
+      /* 非首頁：直接套用白色 header */
+      header.classList.add('scrolled');
+    }
+  }
 
   if (typeof gsap !== 'undefined') {
     initGSAPAnimations();

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css?v=3">
 </head>
 <body data-hero>
 
@@ -98,6 +98,9 @@
 
     <!-- ===== HERO CAROUSEL ===== -->
     <section class="hero-carousel" id="heroCarousel" aria-label="精選商品輪播">
+
+      <div class="hc-texture" aria-hidden="true"></div>
+      <div class="hc-vignette" aria-hidden="true"></div>
 
       <div class="hc-grid">
 
@@ -228,55 +231,204 @@
       </div>
     </section>
 
+    <!-- ===== Floating Products Showcase ===== -->
+    <!-- ===== Floating Products Showcase (Upper) ===== -->
+    <section class="fp-section">
+
+      <!-- Soft radial light overlay -->
+      <div class="fp-overlay" aria-hidden="true"></div>
+
+      <!-- Bottom watermark text -->
+      <div class="fp-watermark" aria-hidden="true">TEXTILE</div>
+
+      <!-- Headline: top-left, free position -->
+      <div class="fp-headline-block">
+        <h2 class="fp-headline">縫紉工藝<br>由精準<br>驅動<br>
+            Sewing craftsmanship<br>driven by<br>precision</h2>
+      </div>
+
+      <!-- SVG thin connecting lines from annotation → product -->
+      <svg class="fp-svglines" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+        <!-- [02] Compatibility → main center product -->
+        <line x1="22" y1="30" x2="50" y2="30"/>
+        <circle cx="50" cy="30" r="0.45"/>
+        <!-- [04] Pricing → lower center product -->
+        <line x1="17" y1="58" x2="40" y2="58"/>
+        <circle cx="40" cy="58" r="0.45"/>
+        <!-- [01] Precision → upper right small product -->
+        <line x1="72" y1="10" x2="92" y2="10"/>
+        <circle cx="72" cy="10" r="0.45"/>
+        <line x1="72" y1="65" x2="92" y2="65"/>
+        <circle cx="72" cy="65" r="0.45"/>
+        <!-- [03] Quality → right center product -->
+        <line x1="72" y1="40" x2="92" y2="40"/>
+        <circle cx="72" cy="40" r="0.45"/>
+      </svg>
+
+      <!-- Left annotations -->
+      <div class="fp-ann fp-ann--l" style="top:32%;left:22%">
+        <span class="fp-ann__n">[02]</span>
+        <strong>相容性</strong>
+        <p>適配各式縫紉機型號<br>安裝即用</p>
+      </div>
+      <div class="fp-ann fp-ann--l" style="top:68%;left:17%">
+        <span class="fp-ann__n">[04]</span>
+        <strong>合理定價</strong>
+        <p>品質與價格的<br>完美平衡</p>
+      </div>
+
+      <!-- Right annotations -->
+      <div class="fp-ann fp-ann--r" style="top:6%;right:7.8%">
+        <span class="fp-ann__n">[01]</span>
+        <strong>高精度加工</strong>
+        <p>Precision Manufacturing<br>每道工序精密檢測</p>
+      </div>
+      <div class="fp-ann fp-ann--r" style="top:45%;right:7.8%">
+        <span class="fp-ann__n">[03]</span>
+        <strong>完整品質管控</strong>
+        <p>Stable Quality<br>確保每批零件一致品質</p>
+      </div>
+      <div class="fp-ann fp-ann--r" style="top:78%;right:7.8%">
+        <span class="fp-ann__n">[05]</span>
+        <strong>完整品質管控</strong>
+        <p>Stable Quality<br>確保每批零件一致品質</p>
+      </div>
+
+      <!-- Floating products: scattered free positions matching reference layout -->
+      <!-- Upper right: small, tilted right -->
+      <div class="fp-item" data-rotate="16" data-fy="12" data-fs="4.8"
+           style="top:4%;left:64%;width:22%;z-index:4">
+        <img src="images/no-06.png" alt="縫紉針" loading="lazy">
+      </div>
+      <!-- Center dominant: large, tilted left -->
+      <div class="fp-item" data-rotate="-13" data-fy="22" data-fs="3.8"
+           style="top:13%;left:29%;width:36%;z-index:5">
+        <img src="images/no-07.png" alt="梭殼" loading="lazy">
+      </div>
+      <!-- Right center: medium, tilted right -->
+      <div class="fp-item" data-rotate="21" data-fy="16" data-fs="5.2"
+           style="top:42%;left:61%;width:28%;z-index:4">
+        <img src="images/no-05.png" alt="壓布腳" loading="lazy">
+      </div>
+      <!-- Lower center: medium, slight tilt -->
+      <div class="fp-item" data-rotate="-8" data-fy="18" data-fs="4.1"
+           style="top:56%;left:33%;width:26%;z-index:3">
+        <img src="images/no-09.png" alt="縫紉線" loading="lazy">
+      </div>
+      <!-- Lower right: medium-large, tilted right -->
+      <div class="fp-item" data-rotate="23" data-fy="14" data-fs="5.6"
+           style="top:70%;left:63%;width:24%;z-index:3">
+        <img src="images/no-11.png" alt="裁切刀" loading="lazy">
+      </div>
+
+      <!-- CTA: glass button, horizontally centered, vertically mid-section -->
+      <div class="fp-cta-center">
+        <a href="shop.html" class="fp-cta">
+          前往目錄 <span class="fp-cta__arrow">→</span>
+        </a>
+      </div>
+
+    </section>
+
+    <!-- ===== Brand Values (Lower, white) ===== -->
+    <section class="bv-section">
+      <div class="container">
+
+        <!-- Section header -->
+        <div class="bv-top">
+          <span class="bv-label">WHY CHOOSE US</span>
+          <div class="bv-top__main">
+            <h2 class="bv-title">專業工藝，<br>值得信賴。</h2>
+            <p class="bv-desc">我們創造能解決精準縫製需求的工具，以耐用性與一致品質為首要承諾。</p>
+          </div>
+        </div>
+
+        <!-- Masonry card grid: 4 cols, asymmetric heights -->
+        <div class="bv-grid">
+
+          <!-- Col 1: tall white card -->
+          <div class="bv-card bv-c1">
+            <div class="bv-card__body">
+              <h4>我們了解職人，<br>並以此驅動每一次決策</h4>
+              <p>深耕台灣縫紉市場多年，我們清楚每一位職人的需求，並將洞察轉化為更好的產品。</p>
+            </div>
+            <a href="shop.html" class="bv-card__link">探索更多 →</a>
+          </div>
+
+          <!-- Col 2: dark tall card (tallest), feature bullet list -->
+          <div class="bv-card bv-c2 bv-dark">
+            <div class="bv-card__body">
+              <ul class="bv-list">
+                <li>工業級精密加工製造</li>
+                <li>多道品質檢測程序</li>
+                <li>所有商品皆具品質保證</li>
+              </ul>
+            </div>
+            <a href="shop.html" class="bv-card__link">了解更多 →</a>
+          </div>
+
+          <!-- Col 3: medium card, pushed to bottom row -->
+          <div class="bv-card bv-c3">
+            <div class="bv-card__body">
+              <h4>完全相容性<br>與使用彈性</h4>
+              <p>適配各式縫紉機型號，即插即用</p>
+            </div>
+            <span class="bv-card__arr">→</span>
+          </div>
+
+          <!-- Col 4 row 1: medium card -->
+          <div class="bv-card bv-c4">
+            <div class="bv-card__body">
+              <h4>台灣精選製造</h4>
+              <p>嚴格把關每一件商品的來源與品質，提供最值得信賴的工具。</p>
+            </div>
+            <a href="shop.html" class="bv-card__link">探索商品 →</a>
+          </div>
+
+          <!-- Col 4 row 2: small arrow card -->
+          <div class="bv-card bv-c5">
+            <a href="shop.html" aria-label="探索全部" class="bv-arrowlink">↗</a>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
     <!-- ===== 職人首選 ===== -->
     <section class="featured-editorial">
       <div class="fe-grid">
-
-        <!-- ── 左欄：大圖，貼齊容器左緣 ── -->
         <div class="fe-left">
           <img class="fe-main-img" id="feMainImg"
                src="images/product-05.jpg"
                alt="不鏽鋼壓布腳"
                loading="eager">
         </div>
-
-        <!-- ── 右欄：上半(文字+縮圖) + 下半(CRAFTSMAN) ── -->
         <div class="fe-right">
-
-          <!-- 右欄上半：文字介紹(左) + 2×2 縮圖(右) -->
           <div class="fe-upper">
-
             <div class="fe-desc">
               <p class="fe-desc__num">No. 01 — 05</p>
               <p class="fe-desc__body">每一件工具，都是精密工藝的結晶。我們為台灣縫紉職人嚴選每一款零件，從材質到精度，確保使用時帶來穩定精準的體驗。</p>
               <a href="shop.html" class="fe-desc__link">Explore Products</a>
             </div>
-
             <div class="fe-thumbs" id="feThumbs">
-              <button class="fe-thumb is-active" data-src="images/product-05.jpg" data-alt="不鏽鋼壓布腳" aria-pressed="true">
+              <button class="fe-thumb is-active" data-src="images/product-05.jpg" data-alt="不鏽鋼壓布腳" data-word="CRAFTSMAN" aria-pressed="true">
                 <img src="images/product-05.jpg" alt="不鏽鋼壓布腳" loading="lazy">
               </button>
-              <button class="fe-thumb" data-src="images/product-06.jpg" data-alt="通用縫紉針" aria-pressed="false">
+              <button class="fe-thumb" data-src="images/product-06.jpg" data-alt="通用縫紉針" data-word="PRECISION" aria-pressed="false">
                 <img src="images/product-06.jpg" alt="通用縫紉針" loading="lazy">
               </button>
-              <button class="fe-thumb" data-src="images/product-07.jpg" data-alt="精密梭殼" aria-pressed="false">
+              <button class="fe-thumb" data-src="images/product-07.jpg" data-alt="精密梭殼" data-word="DETAIL" aria-pressed="false">
                 <img src="images/product-07.jpg" alt="精密梭殼" loading="lazy">
               </button>
-              <button class="fe-thumb" data-src="images/product-08.jpg" data-alt="棉質縫紉線" aria-pressed="false">
+              <button class="fe-thumb" data-src="images/product-08.jpg" data-alt="棉質縫紉線" data-word="TEXTILE" aria-pressed="false">
                 <img src="images/product-08.jpg" alt="棉質縫紉線" loading="lazy">
               </button>
             </div>
-
-          </div><!-- /.fe-upper -->
-
-          <!-- 右欄下半：CRAFTSMAN，只在右欄底部 -->
-          <div class="fe-lower">
-            <div class="fe-hero-type" id="feHeroType" aria-hidden="true">CRAFTSMAN</div>
           </div>
-
-        </div><!-- /.fe-right -->
-
-      </div><!-- /.fe-grid -->
+        </div>
+      </div>
+      <!-- 大型 Image Mask Typography — 直接掛在 section 下，避免被 fe-right 的 stacking context 包住 -->
+      <div class="fe-hero-type" id="feHeroType" aria-hidden="true">CRAFTSMAN</div>
     </section>
 
     <!-- ===== 數據展示 ===== -->
@@ -303,27 +455,21 @@
         </div>
       </div>
   
-    <!-- ===== 品牌理念 ===== -->
-    <section class="editorial" id="editorial">
-      <div class="editorial__inner">
-        <div class="editorial__img-col">
-          <img src="images/hero1.jpg" alt="布落之處品牌故事" loading="lazy">
-        </div>
-        <div class="editorial__text-col">
-          <span class="section-label">關於布落之處</span>
-          <h2 class="editorial__title">工藝，<br>始於對<br>細節的執著</h2>
-          <div class="editorial__body">
-            <p>我們相信，精準的工具是好工藝的起點。布落之處自成立以來，專注於為台灣縫紉職人與工藝愛好者，提供嚴選的頂級紡織零件。</p>
-            <p>每一件商品都經過嚴格把關，從材質到精度，確保在使用時帶來穩定、精準的體驗。無論家庭縫紉或商業製衣，我們都能為您找到最合適的工具。</p>
-          </div>
-          <a href="shop.html" class="btn btn--outline">探索全部商品</a>
-        </div>
-      </div>
-    </section>
+  
 
-    <!-- ===== 電子報訂閱 ===== -->
-    <section class="newsletter section" id="newsletter">
-      <div class="container">
+    <!-- ===== Brand Philosophy ===== -->
+    <section class="brand-phil">
+      <div class="brand-phil__inner">
+        <div class="brand-phil__text-col">
+          <span class="section-label">品牌哲學</span>
+          <h2 class="brand-phil__title">Craftsmanship<br>Starts with<br>Details.</h2>
+          <p class="brand-phil__body">工藝的本質，在於對細節的執著。每一針、每一線，都是對品質無聲的承諾。</p>
+        </div>
+        <div class="brand-phil__img-col">
+            <img src="images/hero1.jpg" alt="工藝細節" loading="lazy">
+          </div>
+      </div>
+      <div class="news-container">
         <div class="newsletter__inner">
           <div class="newsletter__text">
             <span class="section-label">訂閱電子報</span>
@@ -341,6 +487,7 @@
       </div>
     </section>
 
+    
   </main>
 
   <!-- ===== FOOTER ===== -->
