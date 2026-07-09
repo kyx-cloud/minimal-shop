@@ -1677,7 +1677,7 @@ max-width:none;
 .fe-right {
   display: flex;
   flex-direction: column;
-  padding: 10px 0 0 36px;
+  padding: 10px 0 0 30px;
   position: relative;
   z-index: 3;               /* text content: topmost layer */
 }
@@ -1751,8 +1751,8 @@ max-width:none;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   gap: 6px;
-  width: 400px;
-  height: 400px;
+  width: 350px;
+  height: 350px;
 }
 
 .fe-thumb {
