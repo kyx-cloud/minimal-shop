@@ -1367,20 +1367,9 @@ function initGSAPAnimations() {
   const feHeroType = document.getElementById('feHeroType');
   if (feHeroType) {
     gsap.from(feHeroType, {
-      opacity: 0, y: 90,
-      duration: 1.5, ease: 'power3.out',
+      opacity: 0, y: 40,
+      duration: 1.2, ease: 'power3.out',
       scrollTrigger: { trigger: feHeroType, start: 'top 95%' },
-    });
-    /* parallax */
-    gsap.to(feHeroType, {
-      y: -80,
-      ease: 'none',
-      scrollTrigger: {
-        trigger: '.featured-editorial',
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: 1.2,
-      },
     });
   }
 
@@ -1481,14 +1470,55 @@ function initGSAPAnimations() {
     });
   }
 
-  /* ── bv-section: cards stagger in from below ── */
+  /* ── bv-section: glass cards appear one by one, back→front ── */
   const bvCards = [...document.querySelectorAll('.bv-card')];
   if (bvCards.length) {
-    gsap.from(bvCards, {
-      opacity: 0, y: 48, filter: 'blur(4px)',
-      duration: 0.85, stagger: 0.1, ease: 'power3.out',
-      scrollTrigger: { trigger: '.bv-grid', start: 'top 84%' },
-    });
+    const isMobile = window.innerWidth < 769;
+
+    if (!isMobile) {
+      /* Final stacked positions: c1=front(index 0), c4=back(index 3) */
+      const stackFinal = [
+        { rotation: 0,  x: 460,   y: 80  },
+        { rotation: 0, x: 190, y: 60  },
+        { rotation: 0,  x: -80,  y: 40 },
+        { rotation: 0, x: -350, y: 20 },
+      ];
+
+      /* Set initial state: each card at final x/rotation but 80px below */
+      bvCards.forEach((card, i) => {
+        gsap.set(card, {
+          opacity: 0,
+          y: stackFinal[i].y + 80,
+          x: stackFinal[i].x,
+          rotation: stackFinal[i].rotation,
+        });
+      });
+
+      ScrollTrigger.create({
+        trigger: '.bv-stack',
+        start: 'top 75%',
+        onEnter() {
+          /* Back card (c4, index 3) appears first, front card (c1, index 0) last */
+          bvCards.forEach((card, i) => {
+            const delay = (bvCards.length - 1 - i) * 0.22;
+            gsap.to(card, {
+              opacity: 1,
+              y: stackFinal[i].y,
+              duration: 0.72,
+              delay,
+              ease: 'power2.out',
+            });
+          });
+        },
+      });
+    } else {
+      /* Mobile: simple stagger fade-in, no deck rotation */
+      gsap.from(bvCards, {
+        opacity: 0, y: 30,
+        duration: 0.65, stagger: 0.12, ease: 'power2.out',
+        scrollTrigger: { trigger: '.bv-stack', start: 'top 82%' },
+      });
+    }
   }
 }
 
@@ -1540,9 +1570,9 @@ function initScrollEffects() {
   if (header) {
     const heroEl = document.getElementById('heroCarousel');
     if (heroEl) {
-      /* 首頁：監聽 scroll，超過 80px 後切換 .scrolled */
+      /* 首頁：hero 底部離開 viewport 後才切換 scrolled */
       const onScroll = () => {
-        header.classList.toggle('scrolled', window.scrollY > 80);
+        header.classList.toggle('scrolled', heroEl.getBoundingClientRect().bottom <= 0);
       };
       window.addEventListener('scroll', onScroll, { passive: true });
       onScroll(); /* 初始化立即執行一次 */
