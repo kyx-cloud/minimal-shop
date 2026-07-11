@@ -1497,21 +1497,62 @@ function initGSAPAnimations() {
     });
   }
 
-  /* ── bv-section: cards stagger fade-up ── */
+  /* ── bv-section: stacked cards reveal + hover push ── */
   const bvInfoCards = [...document.querySelectorAll('.bv-card')];
   if (bvInfoCards.length) {
-    gsap.set(bvInfoCards, { opacity: 0, y: 60 });
+    const bvRotations  = [-2, 0, 2];
+    const bvBaseZ      = [1, 2, 3];
+
+    /* Set initial hidden state with target rotation */
+    bvInfoCards.forEach((card, i) => {
+      gsap.set(card, { opacity: 0, y: 70, rotation: bvRotations[i] });
+    });
+
+    /* Stagger reveal on scroll */
     ScrollTrigger.create({
       trigger: '.bv-cards',
       start: 'top 85%',
       once: true,
       onEnter() {
-        gsap.to(bvInfoCards, {
-          opacity: 1, y: 0,
-          duration: 0.9, ease: 'power2.out',
-          stagger: 0.22,
+        bvInfoCards.forEach((card, i) => {
+          gsap.to(card, {
+            opacity: 1, y: 0,
+            duration: 0.9, ease: 'power2.out',
+            delay: i * 0.22,
+          });
         });
       },
+    });
+
+    /* Hover: hovered card lifts, neighbours spread */
+    const isMobileDevice = () => window.innerWidth < 700;
+
+    bvInfoCards.forEach((card, idx) => {
+      card.addEventListener('mouseenter', () => {
+        if (isMobileDevice()) return;
+        bvInfoCards.forEach((c, i) => {
+          gsap.killTweensOf(c);
+          if (i === idx) {
+            gsap.set(c, { zIndex: 10 });
+            gsap.to(c, { y: -12, rotation: bvRotations[i], duration: 0.35, ease: 'power2.out' });
+          } else {
+            const spread = i < idx ? -9 : 9;
+            gsap.to(c, { x: spread, rotation: bvRotations[i], duration: 0.35, ease: 'power2.out' });
+          }
+        });
+      });
+
+      card.addEventListener('mouseleave', () => {
+        if (isMobileDevice()) return;
+        bvInfoCards.forEach((c, i) => {
+          gsap.killTweensOf(c);
+          gsap.to(c, {
+            y: 0, x: 0, rotation: bvRotations[i],
+            duration: 0.5, ease: 'power2.inOut',
+            onComplete: () => gsap.set(c, { zIndex: bvBaseZ[i] }),
+          });
+        });
+      });
     });
   }
 

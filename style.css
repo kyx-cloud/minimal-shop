@@ -2416,27 +2416,10 @@ margin-right: 200px;
    ============================================================ */
 
 .bv-section {
-  background: var(--c-section-bg);
+  background: #ffffff;
   position: relative;
   overflow: hidden;
-  padding: 120px 0 100px;
-}
-
-/* Watermark behind glass cards */
-.bv-bg-text {
-  position: absolute;
-  bottom: -8%;
-  right: -2%;
-  font-size: clamp(10rem, 28vw, 34rem);
-  font-weight: 700;
-  letter-spacing: -0.06em;
-  color: #1a1a1a;
-  opacity: 0.05;
-  pointer-events: none;
-  user-select: none;
-  white-space: nowrap;
-  line-height: 1;
-  z-index: 0;
+  padding: 120px 0 120px;
 }
 
 .bv-container { position: relative; z-index: 1; }
@@ -2471,16 +2454,17 @@ margin-right: 200px;
   margin: 0 auto;
 }
 
-/* ── Cards row ── */
+/* ── Cards stacked row ── */
 .bv-cards {
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  gap: 24px;
+  /* No gap — overlap handled per card */
 }
 
-/* ── Card base (glass) ── */
+/* ── Card base ── */
 .bv-card {
+  position: relative;
   width: 280px;
   border-radius: 30px;
   padding: 36px 32px 0;
@@ -2489,33 +2473,40 @@ margin-right: 200px;
   overflow: hidden;
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  box-shadow: 0 16px 56px rgba(0,0,0,0.08),
-              inset 0 1px 0 rgba(255,255,255,0.9);
-  transition: transform 0.45s cubic-bezier(0.22,1,0.36,1),
-              box-shadow 0.45s cubic-bezier(0.22,1,0.36,1);
-}
-.bv-card:hover {
-  transform: translateY(-10px);
-  box-shadow: 0 30px 80px rgba(0,0,0,0.14),
-              inset 0 1px 0 rgba(255,255,255,0.9);
+  /* box-shadow and transition set per variant or via GSAP */
+  transition: box-shadow 0.4s ease;
+  will-change: transform;
 }
 
-/* Card colour variants */
+/* Card colour variants — z-index & overlap */
 .bv-card--white {
-  background: rgba(255,255,255,0.72);
-  border: 1px solid rgba(255,255,255,0.85);
+  background: rgba(255,255,255,0.82);
+  border: 1px solid rgba(200,200,200,0.6);
+  box-shadow: 0 16px 52px rgba(0,0,0,0.10);
   min-height: 360px;
+  z-index: 1;
 }
 .bv-card--gray {
-  background: rgba(232,232,232,0.68);
-  border: 1px solid rgba(255,255,255,0.65);
+  background: rgba(228,228,228,0.80);
+  border: 1px solid rgba(210,210,210,0.5);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.12);
   min-height: 400px;
+  z-index: 2;
+  margin-left: -64px; /* overlap into card 1 */
 }
 .bv-card--dark {
-  background: rgba(24,24,24,0.88);
+  background: rgba(22,22,22,0.92);
   border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 20px 64px rgba(0,0,0,0.22);
   min-height: 360px;
+  z-index: 3;
+  margin-left: -64px; /* overlap into card 2 */
 }
+
+/* Hover shadow boost (GSAP handles translateY & z-index) */
+.bv-card--white:hover { box-shadow: 0 30px 80px rgba(0,0,0,0.16); }
+.bv-card--gray:hover  { box-shadow: 0 30px 80px rgba(0,0,0,0.18); }
+.bv-card--dark:hover  { box-shadow: 0 30px 80px rgba(0,0,0,0.36); }
 
 /* Card content */
 .bv-card__top { flex: 1; }
@@ -2563,15 +2554,16 @@ margin-right: 200px;
 
 /* ── Responsive ── */
 @media (max-width: 960px) {
-  .bv-cards { gap: 16px; }
   .bv-card { width: 240px; }
+  .bv-card--gray, .bv-card--dark { margin-left: -52px; }
 }
 @media (max-width: 700px) {
   .bv-section { padding: 80px 0 72px; }
   .bv-top { margin-bottom: 48px; }
   .bv-cards { flex-direction: column; align-items: center; gap: 14px; }
   .bv-card { width: 100%; max-width: 320px; padding-bottom: 32px; }
-  .bv-card--white, .bv-card--gray, .bv-card--dark { min-height: unset; }
+  .bv-card--gray, .bv-card--dark { margin-left: 0; } /* no overlap on mobile */
+  .bv-card--white, .bv-card--gray, .bv-card--dark { min-height: unset; z-index: auto; }
   .bv-card__num { font-size: 4.5rem; }
 }
 
