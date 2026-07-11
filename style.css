@@ -1845,14 +1845,14 @@ bottom: -3%;
     grid-template-columns: 1fr;
     align-items: start;
     padding-right: 0;
-    height: 1220px;
+    height: auto;
   }
   .fe-main-img {
-    height: 300px;
+    height: auto;
     min-height: unset;
     aspect-ratio: 4 / 3;
     width: 90%;
-    margin: 0 auto;
+    margin: 32px auto 0;
     filter: grayscale(20);
   }
   .fe-right {
@@ -1873,8 +1873,11 @@ bottom: -3%;
   }
  
   .fe-hero-type {
+    position: relative;   /* 脫離 absolute，跟在 fe-grid 後排列 */
+    bottom: auto;
+    left: 0;
+    margin-top: 8px;
     font-size: clamp(8rem, 36vw, 24rem);
-    left: 0;   /* 單欄時靠左起始 */
   }
 }
 
@@ -2412,14 +2415,36 @@ margin-right: 200px;
 }
 
 /* ============================================================
-   BRAND VALUES — bv-section  (Glass cards, no bg image)
+   BRAND VALUES — bv-section  (Premium material cards)
    ============================================================ */
 
 .bv-section {
-  background: #ffffff;
+  /* Subtle off-white gradient — makes glass effects visible */
+  background: linear-gradient(148deg, #f2f2f2 0%, #e8e8e8 48%, #efefef 100%);
   position: relative;
   overflow: hidden;
   padding: 120px 0 120px;
+}
+
+/* Soft light blobs behind cards — glass blurs these */
+.bv-section::before,
+.bv-section::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.bv-section::before {
+  width: 620px; height: 520px;
+  top: -18%; left: -6%;
+  background: radial-gradient(ellipse at center,
+    rgba(255,255,255,0.72) 0%, transparent 68%);
+}
+.bv-section::after {
+  width: 420px; height: 380px;
+  bottom: -12%; right: 4%;
+  background: radial-gradient(ellipse at center,
+    rgba(255,255,255,0.50) 0%, transparent 65%);
 }
 
 .bv-container { position: relative; z-index: 1; }
@@ -2459,54 +2484,107 @@ margin-right: 200px;
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  /* No gap — overlap handled per card */
 }
 
-/* ── Card base ── */
+/* ── Card base — shared design language ── */
 .bv-card {
   position: relative;
   width: 280px;
-  border-radius: 30px;
+  border-radius: 28px;
   padding: 36px 32px 0;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  /* box-shadow and transition set per variant or via GSAP */
-  transition: box-shadow 0.4s ease;
+  transition:
+    transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.38s ease;
   will-change: transform;
 }
 
-/* Card colour variants — z-index & overlap */
+/* Top-edge light catch — subtle specular highlight */
+.bv-card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 12%; right: 12%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.92) 50%,
+    transparent 100%);
+  pointer-events: none;
+  transition: opacity 0.38s ease;
+  opacity: 0.75;
+}
+.bv-card:hover::after { opacity: 1; }
+
+/* ── Card 01 — White Frosted Glass ── */
 .bv-card--white {
-  background: rgba(255,255,255,0.82);
-  border: 1px solid rgba(200,200,200,0.6);
-  box-shadow: 0 16px 52px rgba(0,0,0,0.10);
+  background: rgba(255, 255, 255, 0.45);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow:
+    0 2px 4px  rgba(0,0,0,0.03),
+    0 10px 28px rgba(0,0,0,0.07),
+    inset 0 1px 0 rgba(255,255,255,0.80);
   min-height: 360px;
   z-index: 1;
 }
-.bv-card--gray {
-  background: rgba(228,228,228,0.80);
-  border: 1px solid rgba(210,210,210,0.5);
-  box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-  min-height: 400px;
-  z-index: 2;
-  margin-left: -64px; /* overlap into card 1 */
-}
-.bv-card--dark {
-  background: rgba(22,22,22,0.92);
-  border: 1px solid rgba(255,255,255,0.08);
-  box-shadow: 0 20px 64px rgba(0,0,0,0.22);
-  min-height: 360px;
-  z-index: 3;
-  margin-left: -64px; /* overlap into card 2 */
+.bv-card--white:hover {
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow:
+    0 4px 8px  rgba(0,0,0,0.05),
+    0 20px 48px rgba(0,0,0,0.11),
+    inset 0 1px 0 rgba(255,255,255,1);
 }
 
-/* Hover shadow boost (GSAP handles translateY & z-index) */
-.bv-card--white:hover { box-shadow: 0 30px 80px rgba(0,0,0,0.16); }
-.bv-card--gray:hover  { box-shadow: 0 30px 80px rgba(0,0,0,0.18); }
-.bv-card--dark:hover  { box-shadow: 0 30px 80px rgba(0,0,0,0.36); }
+/* ── Card 02 — Matte Acrylic ── */
+.bv-card--gray {
+  background: #ECECEC;
+  border: 1px solid rgba(215, 215, 215, 0.9);
+  box-shadow:
+    0 2px 4px  rgba(0,0,0,0.03),
+    0 10px 26px rgba(0,0,0,0.07),
+    inset 0 1px 0 rgba(255,255,255,0.72);
+  min-height: 400px;
+  z-index: 2;
+  margin-left: -64px;
+}
+.bv-card--gray:hover {
+  box-shadow:
+    0 4px 8px  rgba(0,0,0,0.05),
+    0 18px 44px rgba(0,0,0,0.10),
+    inset 0 1px 0 rgba(255,255,255,0.90);
+}
+
+/* ── Card 03 — Smoked Glass ── */
+.bv-card--dark {
+  background: rgba(30, 30, 30, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 2px 4px  rgba(0,0,0,0.10),
+    0 10px 32px rgba(0,0,0,0.18),
+    inset 0 1px 0 rgba(255,255,255,0.07);
+  min-height: 360px;
+  z-index: 3;
+  margin-left: -64px;
+}
+.bv-card--dark:hover {
+  background: rgba(38, 38, 38, 0.88);
+  box-shadow:
+    0 4px 8px  rgba(0,0,0,0.15),
+    0 22px 52px rgba(0,0,0,0.26),
+    inset 0 1px 0 rgba(255,255,255,0.13);
+}
+.bv-card--dark::after {
+  /* Darker card — highlight is more subtle */
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255,255,255,0.20) 50%,
+    transparent 100%);
+}
 
 /* Card content */
 .bv-card__top { flex: 1; }
@@ -2520,7 +2598,7 @@ margin-right: 200px;
   color: rgba(0,0,0,0.36);
   margin-bottom: 12px;
 }
-.bv-card--dark .bv-card__label { color: rgba(255,255,255,0.36); }
+.bv-card--dark .bv-card__label { color: rgba(255,255,255,0.45); }
 
 .bv-card__main {
   font-size: clamp(1.1rem, 1.7vw, 1.45rem);
@@ -2537,20 +2615,21 @@ margin-right: 200px;
   color: rgba(0,0,0,0.44);
   line-height: 1.75;
 }
-.bv-card--dark .bv-card__body { color: rgba(255,255,255,0.42); }
+.bv-card--dark .bv-card__body { color: rgba(255,255,255,0.58); }
 
-/* Big decorative number */
+/* Big decorative number — watermark feel */
 .bv-card__num {
   font-size: clamp(4rem, 6vw, 6.5rem);
   font-weight: 200;
   letter-spacing: -0.06em;
   line-height: 0.88;
-  color: #1a1a1a;
+  color: rgba(0,0,0,0.07);
   margin-top: 20px;
   display: block;
   user-select: none;
 }
-.bv-card--dark .bv-card__num { color: #ffffff; }
+.bv-card--gray .bv-card__num { color: rgba(0,0,0,0.09); }
+.bv-card--dark .bv-card__num  { color: rgba(255,255,255,0.10); }
 
 /* ── Responsive ── */
 @media (max-width: 960px) {
@@ -2562,9 +2641,10 @@ margin-right: 200px;
   .bv-top { margin-bottom: 48px; }
   .bv-cards { flex-direction: column; align-items: center; gap: 14px; }
   .bv-card { width: 100%; max-width: 320px; padding-bottom: 32px; }
-  .bv-card--gray, .bv-card--dark { margin-left: 0; } /* no overlap on mobile */
+  .bv-card--gray, .bv-card--dark { margin-left: 0; }
   .bv-card--white, .bv-card--gray, .bv-card--dark { min-height: unset; z-index: auto; }
   .bv-card__num { font-size: 4.5rem; }
+  /* hover shadow still applies on mobile, GSAP movements do not (isMobile guard in JS) */
 }
 
 /* ============================================================

@@ -1497,58 +1497,50 @@ function initGSAPAnimations() {
     });
   }
 
-  /* ── bv-section: stacked cards reveal + hover push ── */
+  /* ── bv-section: stacked cards reveal + hover ── */
   const bvInfoCards = [...document.querySelectorAll('.bv-card')];
   if (bvInfoCards.length) {
-    const bvRotations  = [-2, 0, 2];
-    const bvBaseZ      = [1, 2, 3];
-
-    /* Set initial hidden state with target rotation */
-    bvInfoCards.forEach((card, i) => {
-      gsap.set(card, { opacity: 0, y: 70, rotation: bvRotations[i] });
-    });
+    const bvBaseZ = [1, 2, 3];
 
     /* Stagger reveal on scroll */
-    ScrollTrigger.create({
-      trigger: '.bv-cards',
-      start: 'top 85%',
-      once: true,
-      onEnter() {
-        bvInfoCards.forEach((card, i) => {
-          gsap.to(card, {
-            opacity: 1, y: 0,
-            duration: 0.9, ease: 'power2.out',
-            delay: i * 0.22,
-          });
-        });
+    gsap.from(bvInfoCards, {
+      opacity: 0,
+      y: 60,
+      duration: 0.95,
+      ease: 'power2.out',
+      stagger: 0.20,
+      scrollTrigger: {
+        trigger: '.bv-cards',
+        start: 'top 85%',
+        once: true,
       },
     });
 
-    /* Hover: hovered card lifts, neighbours spread */
-    const isMobileDevice = () => window.innerWidth < 700;
+    /* Hover: hovered card lifts, neighbours lightly spread */
+    const isMobile = () => window.innerWidth < 700;
 
     bvInfoCards.forEach((card, idx) => {
       card.addEventListener('mouseenter', () => {
-        if (isMobileDevice()) return;
+        if (isMobile()) return;
         bvInfoCards.forEach((c, i) => {
           gsap.killTweensOf(c);
           if (i === idx) {
             gsap.set(c, { zIndex: 10 });
-            gsap.to(c, { y: -12, rotation: bvRotations[i], duration: 0.35, ease: 'power2.out' });
+            gsap.to(c, { y: -8, duration: 0.35, ease: 'power2.out' });
           } else {
-            const spread = i < idx ? -9 : 9;
-            gsap.to(c, { x: spread, rotation: bvRotations[i], duration: 0.35, ease: 'power2.out' });
+            const nudge = i < idx ? -8 : 8;
+            gsap.to(c, { x: nudge, duration: 0.35, ease: 'power2.out' });
           }
         });
       });
 
       card.addEventListener('mouseleave', () => {
-        if (isMobileDevice()) return;
+        if (isMobile()) return;
         bvInfoCards.forEach((c, i) => {
           gsap.killTweensOf(c);
           gsap.to(c, {
-            y: 0, x: 0, rotation: bvRotations[i],
-            duration: 0.5, ease: 'power2.inOut',
+            y: 0, x: 0,
+            duration: 0.50, ease: 'power2.inOut',
             onComplete: () => gsap.set(c, { zIndex: bvBaseZ[i] }),
           });
         });
