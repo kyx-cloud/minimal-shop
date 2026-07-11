@@ -1497,23 +1497,38 @@ function initGSAPAnimations() {
     });
   }
 
-  /* ── bv-section: bento cards sequential fade-up ── */
-  const bvBentoCards = [...document.querySelectorAll('.bv-card-new')];
-  if (bvBentoCards.length) {
-    gsap.from(bvBentoCards, {
-      opacity: 0, y: 52, filter: 'blur(4px)',
-      duration: 0.9, ease: 'power2.out',
-      stagger: 0.16,
-      scrollTrigger: { trigger: '.bv-bento', start: 'top 82%' },
-    });
+  /* ── bv-section: hero product reveal + float cards ── */
+  const bvHeroProduct  = document.querySelector('.bv-hero-product');
+  const bvFloatCards   = [...document.querySelectorAll('.bv-float-card')];
 
-    /* Subtle float on card images */
-    document.querySelectorAll('.bv-card__img, .bv-card__img--sm').forEach((img, i) => {
-      gsap.to(img, {
-        y: -8, duration: 3.2 + i * 0.4,
-        ease: 'sine.inOut', yoyo: true, repeat: -1,
-        delay: -(i * 0.7),
-      });
+  if (bvHeroProduct) {
+    ScrollTrigger.create({
+      trigger: '.bv-stage',
+      start: 'top 84%',
+      once: true,
+      onEnter() {
+        /* Product sweeps in */
+        gsap.from(bvHeroProduct, {
+          opacity: 0, y: 72, scale: 0.82,
+          duration: 1.2, ease: 'power3.out',
+          onComplete() {
+            /* Gentle perpetual float after reveal */
+            gsap.to(bvHeroProduct.querySelector('img'), {
+              y: -18, duration: 4.2,
+              ease: 'sine.inOut', yoyo: true, repeat: -1,
+            });
+          },
+        });
+        /* Cards stagger in after product */
+        if (bvFloatCards.length) {
+          gsap.from(bvFloatCards, {
+            opacity: 0, y: 44, filter: 'blur(4px)',
+            duration: 0.85, ease: 'power2.out',
+            stagger: 0.18,
+            delay: 0.35,
+          });
+        }
+      },
     });
   }
 
@@ -1564,7 +1579,7 @@ function initCSSAnimations() {
     '.stat', '.news-title', '.news-desc', '.newsletter__form',
     '.footer-brand', '.footer-col',
     '.brand-phil__img-col', '.brand-phil__text-col',
-    '.fp-headline-block', '.fp-ann', '.bv-card-new',
+    '.fp-headline-block', '.fp-ann', '.bv-float-card',
   ];
 
   revealSelectors.forEach(sel => {
