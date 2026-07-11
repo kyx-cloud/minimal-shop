@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3">
+  <link rel="stylesheet" href="style.css?v=4">
 </head>
 <body data-hero>
 
@@ -457,13 +457,11 @@
             <img src="images/hero1.jpg" alt="工藝細節" loading="lazy">
           </div>
       </div>
-      <div class="news-container">
-        <div class="newsletter__inner">
-          <div class="newsletter__text">
-            <span class="section-label">訂閱電子報</span>
-            <h2 class="newsletter__title">掌握最新動態</h2>
-            <p>新品上架、限定優惠、紡織工藝技巧，第一手資訊直送信箱。</p>
-          </div>
+      <div class="news-container" id="newsletter">
+        <div class="news-inner">
+          <span class="section-label news-label">NEWS</span>
+          <h2 class="news-title">Stay Updated<br><span>with Bu Luo Zhi Chu</span></h2>
+          <p class="news-desc">新品上架、限定優惠、紡織工藝技巧，第一手資訊直送信箱。</p>
           <form class="newsletter__form" id="newsletterForm" novalidate>
             <div class="newsletter__input-wrap">
               <input type="email" class="newsletter__input" placeholder="您的電子信箱" required aria-label="電子信箱">
@@ -472,6 +470,7 @@
             <p class="newsletter__note">訂閱即表示您同意接收我們的電子報，您可隨時取消訂閱。</p>
           </form>
         </div>
+        <div class="news-watermark" aria-hidden="true">TEXTILE</div>
       </div>
     </section>
 

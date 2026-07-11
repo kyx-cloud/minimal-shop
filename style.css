@@ -1189,50 +1189,56 @@ body[data-hero] .site-header.scrolled {
 
 /* ── Newsletter ──────────────────────────────────────────── */
 
-.newsletter {
-  background: var(--c-section-bg);
+/* ============================================================
+   NEWS-CONTAINER — Newsletter Redesign
+   ============================================================ */
+.news-container {
   position: relative;
   overflow: hidden;
- 
+  background: var(--c-section-bg);
+  padding: 120px var(--pad) 0;
+  text-align: center;
 }
-.newsletter::before {
-  content: 'SUBSCRIBE';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  font-size: clamp(6rem, 18vw, 18rem);
-  font-weight: 800;
-  letter-spacing: -0.06em;
-  color: rgba(0,0,0,0.028);
-  white-space: nowrap;
-  pointer-events: none;
-  user-select: none;
-  line-height: 1;
-}
-.newsletter__inner {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
 
-  margin: 0 auto;
-  align-items: center;
+.news-inner {
   position: relative;
-  z-index: 1;
-  background: rgba(255,255,255,0.72);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255,255,255,0.85);
-  padding: 72px 80px;
+  z-index: 2;
+  max-width: 640px;
+  margin: 0 auto;
+  padding-bottom: 72px;
 }
-.newsletter__title {
-  font-size: clamp(1.8rem, 3vw, 2.6rem);
+
+.news-label {
+  display: block;
+  margin-bottom: 32px;
+}
+
+.news-title {
+  font-size: clamp(2.4rem, 5vw, 4.8rem);
   font-weight: 300;
   letter-spacing: -0.04em;
-  margin: 14px 0 20px;
-  line-height: 1.1;
+  line-height: 1.12;
+  margin: 0 0 28px;
+  color: var(--c-text);
 }
-.newsletter__text p { font-size: 14px; color: var(--c-text-3); line-height: 1.8; }
+
+.news-title span {
+  display: block;
+  font-weight: 300;
+}
+
+.news-desc {
+  font-size: 14px;
+  color: var(--c-text-3);
+  line-height: 1.8;
+  margin-bottom: 48px;
+}
+
+.news-container .newsletter__form {
+  max-width: 460px;
+  margin: 0 auto;
+}
+
 .newsletter__input-wrap {
   display: flex;
   gap: 0;
@@ -1246,12 +1252,34 @@ body[data-hero] .site-header.scrolled {
   font-size: 14px;
   outline: none;
   background: transparent;
-  background: transparent;
   color: var(--c-text);
 }
 .newsletter__input::placeholder { color: var(--c-text-3); }
 .newsletter__input-wrap .btn { flex-shrink: 0; }
 .newsletter__note { font-size: 11px; color: var(--c-text-3); line-height: 1.6; letter-spacing: 0.01em; }
+
+.news-watermark {
+  position: relative;
+  z-index: 1;
+  font-size: clamp(10rem, 22vw, 30rem);
+  font-weight: 700;
+  letter-spacing: -0.04em;
+  line-height: 0.82;
+  white-space: nowrap;
+  text-align: center;
+  background-image: url('images/hero1.jpg');
+  background-size: cover;
+  background-position: center;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  opacity: 0.24;
+  user-select: none;
+  pointer-events: none;
+  overflow: visible;
+  margin: 0 calc(-1 * var(--pad));
+}
 
 /* ============================================================
    PAGE: SHOP
@@ -1568,7 +1596,8 @@ body[data-hero] .site-header.scrolled {
   .stat { padding: 32px 24px; border-right: none; border-bottom: 1px solid rgba(255,255,255,0.1); }
   .stat:nth-child(odd) { border-right: 1px solid rgba(255,255,255,0.1); }
 
-  .newsletter__inner { grid-template-columns: 1fr; gap: 48px; }
+  .news-container { padding-top: 80px; }
+  .news-title { font-size: clamp(2rem, 8vw, 3.6rem); }
 
   .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
 
@@ -2185,13 +2214,11 @@ padding-bottom: 100px;
 }
 .fe-desc__link:hover .arrow-icon { transform: translateX(5px); }
 
-/* Newsletter responsive */
-@media (max-width: 900px) {
-  .newsletter__inner {
-    grid-template-columns: 1fr;
-    gap: 48px;
-    padding: 48px var(--pad);
-  }
+/* News-container responsive */
+@media (max-width: 768px) {
+  .news-container { padding-top: 72px; }
+  .news-inner { padding-bottom: 48px; }
+  .news-watermark { font-size: clamp(7rem, 28vw, 14rem); margin: 0 -24px; }
 }
 
 /* ============================================================

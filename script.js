@@ -1275,8 +1275,9 @@ function initGSAPAnimations() {
     { sel: '.category-card',       from: { y: 60, opacity: 0, filter: 'blur(5px)' }, stagger: 0.1 },
     { sel: '.editorial__img-col',  from: { x: -40, opacity: 0, filter: 'blur(8px)' }, stagger: 0 },
     { sel: '.editorial__text-col', from: { x:  40, opacity: 0, filter: 'blur(8px)' }, stagger: 0 },
-    { sel: '.newsletter__text',    from: { y:  36, opacity: 0, filter: 'blur(5px)' }, stagger: 0 },
-    { sel: '.newsletter__form',    from: { y:  36, opacity: 0, filter: 'blur(5px)' }, stagger: 0 },
+    { sel: '.news-title',          from: { y:  48, opacity: 0, filter: 'blur(5px)' }, stagger: 0 },
+    { sel: '.news-desc',           from: { y:  28, opacity: 0 }, stagger: 0 },
+    { sel: '.news-container .newsletter__form', from: { y: 28, opacity: 0 }, stagger: 0 },
     { sel: '.footer-brand',        from: { y:  24, opacity: 0 }, stagger: 0 },
     { sel: '.footer-col',          from: { y:  24, opacity: 0 }, stagger: 0.08 },
     { sel: '.brand-phil__img-col', from: { x: -40, opacity: 0, filter: 'blur(8px)' }, stagger: 0 },
@@ -1520,6 +1521,26 @@ function initGSAPAnimations() {
       });
     }
   }
+
+  /* ── News watermark float-up ── */
+  const newsWm = document.querySelector('.news-watermark');
+  if (newsWm) {
+    gsap.from(newsWm, {
+      y: 80, opacity: 0,
+      duration: 1.4, ease: 'power3.out',
+      scrollTrigger: { trigger: '.news-container', start: 'top 80%' },
+    });
+  }
+
+  /* ── News label fade-in ── */
+  const newsLabel = document.querySelector('.news-label');
+  if (newsLabel) {
+    gsap.from(newsLabel, {
+      y: 20, opacity: 0,
+      duration: 0.9, ease: 'power3.out',
+      scrollTrigger: { trigger: '.news-container', start: 'top 88%' },
+    });
+  }
 }
 
 /* ============================================================
@@ -1545,7 +1566,7 @@ function initCSSAnimations() {
   const revealSelectors = [
     '.section-header', '.category-card',
     '.editorial__img-col', '.editorial__text-col',
-    '.stat', '.newsletter__text', '.newsletter__form',
+    '.stat', '.news-title', '.news-desc', '.newsletter__form',
     '.footer-brand', '.footer-col',
     '.brand-phil__img-col', '.brand-phil__text-col',
     '.fp-headline-block', '.fp-ann', '.bv-card',
