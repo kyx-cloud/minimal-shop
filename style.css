@@ -518,7 +518,6 @@ body[data-hero] .site-header.scrolled {
   background: var(--c-surface);
   color: #fff;
   padding: 88px 0 0;
-  border-top: 1px solid rgba(255,255,255,0.1);
 }
 .footer-grid {
   display: grid;
@@ -1195,7 +1194,7 @@ body[data-hero] .site-header.scrolled {
 .news-container {
   position: relative;
   overflow: hidden;
-  background: var(--c-section-bg);
+  background: var(--c-surface);
   padding: 120px var(--pad) 0;
   text-align: center;
 }
@@ -1205,12 +1204,13 @@ body[data-hero] .site-header.scrolled {
   z-index: 2;
   max-width: 640px;
   margin: 0 auto;
-  padding-bottom: 72px;
+
 }
 
 .news-label {
   display: block;
   margin-bottom: 32px;
+  color: rgba(255,255,255,0.45);
 }
 
 .news-title {
@@ -1219,7 +1219,7 @@ body[data-hero] .site-header.scrolled {
   letter-spacing: -0.04em;
   line-height: 1.12;
   margin: 0 0 28px;
-  color: var(--c-text);
+  color: #ffffff;
 }
 
 .news-title span {
@@ -1229,7 +1229,7 @@ body[data-hero] .site-header.scrolled {
 
 .news-desc {
   font-size: 14px;
-  color: var(--c-text-3);
+  color: rgba(255,255,255,0.45);
   line-height: 1.8;
   margin-bottom: 48px;
 }
@@ -1239,42 +1239,41 @@ body[data-hero] .site-header.scrolled {
   margin: 0 auto;
 }
 
-.newsletter__input-wrap {
+.news-container .newsletter__input-wrap {
   display: flex;
   gap: 0;
   margin-bottom: 14px;
-  border-bottom: 1px solid var(--c-border);
+  border-bottom: 1px solid rgba(255,255,255,0.2);
 }
-.newsletter__input {
+.news-container .newsletter__input {
   flex: 1;
   border: none;
   padding: 14px 0;
   font-size: 14px;
   outline: none;
   background: transparent;
-  color: var(--c-text);
+  color: #ffffff;
 }
-.newsletter__input::placeholder { color: var(--c-text-3); }
+.news-container .newsletter__input::placeholder { color: rgba(255,255,255,0.35); }
 .newsletter__input-wrap .btn { flex-shrink: 0; }
-.newsletter__note { font-size: 11px; color: var(--c-text-3); line-height: 1.6; letter-spacing: 0.01em; }
+.news-container .newsletter__note { font-size: 11px; color: rgba(255,255,255,0.3); line-height: 1.6; letter-spacing: 0.01em; }
 
 .news-watermark {
   position: relative;
   z-index: 1;
   font-size: clamp(10rem, 22vw, 30rem);
-  font-weight: 700;
+  font-weight: 500;
   letter-spacing: -0.04em;
   line-height: 0.82;
   white-space: nowrap;
   text-align: center;
-  background-image: url('images/hero1.jpg');
+  background-image: url('images/product-11.jpg');
   background-size: cover;
   background-position: center;
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
   color: transparent;
-  opacity: 0.24;
   user-select: none;
   pointer-events: none;
   overflow: visible;
