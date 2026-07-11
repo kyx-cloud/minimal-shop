@@ -518,6 +518,7 @@ body[data-hero] .site-header.scrolled {
   background: var(--c-surface);
   color: #fff;
   padding: 88px 0 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
 }
 .footer-grid {
   display: grid;
@@ -1194,7 +1195,7 @@ body[data-hero] .site-header.scrolled {
 .news-container {
   position: relative;
   overflow: hidden;
-  background: var(--c-surface);
+  background: #ffffff;
   padding: 120px var(--pad) 0;
   text-align: center;
 }
@@ -1210,7 +1211,6 @@ body[data-hero] .site-header.scrolled {
 .news-label {
   display: block;
   margin-bottom: 32px;
-  color: rgba(255,255,255,0.45);
 }
 
 .news-title {
@@ -1219,7 +1219,7 @@ body[data-hero] .site-header.scrolled {
   letter-spacing: -0.04em;
   line-height: 1.12;
   margin: 0 0 28px;
-  color: #ffffff;
+  color: var(--c-text);
 }
 
 .news-title span {
@@ -1229,7 +1229,7 @@ body[data-hero] .site-header.scrolled {
 
 .news-desc {
   font-size: 14px;
-  color: rgba(255,255,255,0.45);
+  color: var(--c-text-3);
   line-height: 1.8;
   margin-bottom: 48px;
 }
@@ -1239,24 +1239,24 @@ body[data-hero] .site-header.scrolled {
   margin: 0 auto;
 }
 
-.news-container .newsletter__input-wrap {
+.newsletter__input-wrap {
   display: flex;
   gap: 0;
   margin-bottom: 14px;
-  border-bottom: 1px solid rgba(255,255,255,0.2);
+  border-bottom: 1px solid var(--c-border);
 }
-.news-container .newsletter__input {
+.newsletter__input {
   flex: 1;
   border: none;
   padding: 14px 0;
   font-size: 14px;
   outline: none;
   background: transparent;
-  color: #ffffff;
+  color: var(--c-text);
 }
-.news-container .newsletter__input::placeholder { color: rgba(255,255,255,0.35); }
+.newsletter__input::placeholder { color: var(--c-text-3); }
 .newsletter__input-wrap .btn { flex-shrink: 0; }
-.news-container .newsletter__note { font-size: 11px; color: rgba(255,255,255,0.3); line-height: 1.6; letter-spacing: 0.01em; }
+.newsletter__note { font-size: 11px; color: var(--c-text-3); line-height: 1.6; letter-spacing: 0.01em; }
 
 .news-watermark {
   position: relative;
@@ -2121,7 +2121,7 @@ bottom: -3%;
    ============================================================ */
 .brand-phil {
   background: var(--c-section-bg);
-padding-bottom: 100px;
+  padding-bottom: 0;
   overflow: hidden;
 }
 .brand-phil__inner {
