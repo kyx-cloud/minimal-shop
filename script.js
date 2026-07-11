@@ -1497,32 +1497,21 @@ function initGSAPAnimations() {
     });
   }
 
-  /* ── bv-section: background parallax zoom ── */
-  const bvBgImg = document.querySelector('.bv-bg__img');
-  if (bvBgImg) {
-    gsap.fromTo(bvBgImg,
-      { scale: 1 },
-      {
-        scale: 1.07,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: '.bv-section',
-          start: 'top bottom',
-          end: 'bottom top',
-          scrub: true,
-        },
-      }
-    );
-  }
-
-  /* ── bv-section: info cards stagger fade-up ── */
+  /* ── bv-section: cards stagger fade-up ── */
   const bvInfoCards = [...document.querySelectorAll('.bv-card')];
   if (bvInfoCards.length) {
-    gsap.from(bvInfoCards, {
-      opacity: 0, y: 56,
-      duration: 0.9, ease: 'power2.out',
-      stagger: 0.20,
-      scrollTrigger: { trigger: '.bv-cards', start: 'top 85%' },
+    gsap.set(bvInfoCards, { opacity: 0, y: 60 });
+    ScrollTrigger.create({
+      trigger: '.bv-cards',
+      start: 'top 85%',
+      once: true,
+      onEnter() {
+        gsap.to(bvInfoCards, {
+          opacity: 1, y: 0,
+          duration: 0.9, ease: 'power2.out',
+          stagger: 0.22,
+        });
+      },
     });
   }
 
