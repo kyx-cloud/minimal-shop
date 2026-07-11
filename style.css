@@ -2416,7 +2416,7 @@ margin-right: 200px;
    ============================================================ */
 
 .bv-section {
-  background: var(--c-section-bg);
+  background: #ffffff;
   padding: 96px 0 120px;
   position: relative;
   overflow: hidden;
