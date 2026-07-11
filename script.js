@@ -832,10 +832,11 @@ function initFloatingProducts() {
     });
 
     const baseOpacity = parseFloat(el.dataset.baseOpacity ?? 0.9);
+    const finalScale  = parseFloat(el.dataset.finalScale  ?? 1.0);
     el.addEventListener('mouseenter', () =>
-      gsap.to(el, { scale: 1.08, opacity: 1, duration: 0.35, ease: 'power2.out' }));
+      gsap.to(el, { scale: finalScale * 1.10, opacity: 1, duration: 0.35, ease: 'power2.out' }));
     el.addEventListener('mouseleave', () =>
-      gsap.to(el, { scale: 1, opacity: baseOpacity, duration: 0.45, ease: 'power2.out' }));
+      gsap.to(el, { scale: finalScale, opacity: baseOpacity, duration: 0.45, ease: 'power2.out' }));
   });
 }
 
@@ -1409,13 +1410,15 @@ function initGSAPAnimations() {
   const fpItems = [...document.querySelectorAll('.fp-item')];
   if (fpItems.length) {
     /* Depth config: 1=closest, 3=furthest */
-    const depthOpacity = { '1': 0.95, '2': 0.60, '3': 0.38 };
-    const depthInitScale = { '1': 0.94, '2': 0.90, '3': 0.86 };
+    const depthOpacity    = { '1': 0.95, '2': 0.58, '3': 0.35 };
+    const depthInitScale  = { '1': 0.55, '2': 0.38, '3': 0.22 }; /* 遠的從更小縮放進來 */
+    const depthFinalScale = { '1': 1.00, '2': 0.88, '3': 0.76 }; /* 停在不同大小強調距離 */
 
     fpItems.forEach(item => {
       const d = item.dataset.depth ?? '2';
-      item.dataset.baseOpacity = depthOpacity[d] ?? 0.60;
-      gsap.set(item, { opacity: 0, y: 40, scale: depthInitScale[d] ?? 0.90 });
+      item.dataset.baseOpacity   = depthOpacity[d]    ?? 0.58;
+      item.dataset.finalScale    = depthFinalScale[d] ?? 0.88;
+      gsap.set(item, { opacity: 0, y: 60, scale: depthInitScale[d] ?? 0.38 });
     });
 
     /* Sort far→near so background items appear first */
@@ -1431,10 +1434,11 @@ function initGSAPAnimations() {
         let completed = 0;
         sortedByDepth.forEach((item, i) => {
           const targetOpacity = parseFloat(item.dataset.baseOpacity);
+          const targetScale   = parseFloat(item.dataset.finalScale);
           gsap.to(item, {
-            opacity: targetOpacity, y: 0, scale: 1,
-            delay: i * 0.18,
-            duration: 1.0, ease: 'power2.out',
+            opacity: targetOpacity, y: 0, scale: targetScale,
+            delay: i * 0.20,
+            duration: 1.1, ease: 'back.out(1.3)',
             onComplete() {
               completed++;
               if (completed === sortedByDepth.length && !floatStarted) {
