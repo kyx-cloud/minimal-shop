@@ -1497,38 +1497,32 @@ function initGSAPAnimations() {
     });
   }
 
-  /* ── bv-section: hero product reveal + float cards ── */
-  const bvHeroProduct  = document.querySelector('.bv-hero-product');
-  const bvFloatCards   = [...document.querySelectorAll('.bv-float-card')];
+  /* ── bv-section: background parallax zoom ── */
+  const bvBgImg = document.querySelector('.bv-bg__img');
+  if (bvBgImg) {
+    gsap.fromTo(bvBgImg,
+      { scale: 1 },
+      {
+        scale: 1.07,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: '.bv-section',
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: true,
+        },
+      }
+    );
+  }
 
-  if (bvHeroProduct) {
-    ScrollTrigger.create({
-      trigger: '.bv-stage',
-      start: 'top 84%',
-      once: true,
-      onEnter() {
-        /* Product sweeps in */
-        gsap.from(bvHeroProduct, {
-          opacity: 0, y: 72, scale: 0.82,
-          duration: 1.2, ease: 'power3.out',
-          onComplete() {
-            /* Gentle perpetual float after reveal */
-            gsap.to(bvHeroProduct.querySelector('img'), {
-              y: -18, duration: 4.2,
-              ease: 'sine.inOut', yoyo: true, repeat: -1,
-            });
-          },
-        });
-        /* Cards stagger in after product */
-        if (bvFloatCards.length) {
-          gsap.from(bvFloatCards, {
-            opacity: 0, y: 44, filter: 'blur(4px)',
-            duration: 0.85, ease: 'power2.out',
-            stagger: 0.18,
-            delay: 0.35,
-          });
-        }
-      },
+  /* ── bv-section: info cards stagger fade-up ── */
+  const bvInfoCards = [...document.querySelectorAll('.bv-card')];
+  if (bvInfoCards.length) {
+    gsap.from(bvInfoCards, {
+      opacity: 0, y: 56,
+      duration: 0.9, ease: 'power2.out',
+      stagger: 0.20,
+      scrollTrigger: { trigger: '.bv-cards', start: 'top 85%' },
     });
   }
 
@@ -1579,7 +1573,7 @@ function initCSSAnimations() {
     '.stat', '.news-title', '.news-desc', '.newsletter__form',
     '.footer-brand', '.footer-col',
     '.brand-phil__img-col', '.brand-phil__text-col',
-    '.fp-headline-block', '.fp-ann', '.bv-float-card',
+    '.fp-headline-block', '.fp-ann', '.bv-card',
   ];
 
   revealSelectors.forEach(sel => {

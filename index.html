@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=11">
+  <link rel="stylesheet" href="style.css?v=12">
 </head>
 <body data-hero>
 
@@ -332,43 +332,46 @@
 
     <!-- ===== Brand Values (Lower, white) ===== -->
     <section class="bv-section">
-      <span class="bv-bg-text" aria-hidden="true">CRAFT</span>
+      <!-- Background image -->
+      <div class="bv-bg">
+        <img class="bv-bg__img" src="images/hero1.jpg" alt="">
+      </div>
+      <div class="bv-overlay"></div>
+
       <div class="container bv-container">
 
-        <!-- Centered section header -->
+        <!-- Centered header -->
         <div class="bv-top">
           <span class="bv-label">WHY CHOOSE US</span>
           <h2 class="bv-title">專業工藝，<br>值得信賴。</h2>
-          <p class="bv-desc">我們創造能解決精準縫製需求的工具，以耐用性與一致品質為首要承諾。</p>
+          <p class="bv-desc">我們專注於高品質縫紉零件，從材料到製程皆經過嚴格把關，提供專業、耐用且值得信賴的產品。</p>
         </div>
 
-        <!-- Central product stage with floating cards -->
-        <div class="bv-stage">
+        <!-- Three info cards -->
+        <div class="bv-cards">
 
-          <!-- Central hero product -->
-          <div class="bv-hero-product">
-            <img src="images/no-07.png" alt="" aria-hidden="true">
+          <div class="bv-card bv-card--white">
+            <div class="bv-card__top">
+              <p class="bv-card__label">Made in Taiwan</p>
+              <h3 class="bv-card__main">台灣精選製造</h3>
+            </div>
+            <div class="bv-card__num">01</div>
           </div>
 
-          <!-- Card 1: bottom-left -->
-          <div class="bv-float-card bv-float-card--1">
-            <img class="bv-float-card__icon" src="images/no-05.png" alt="" aria-hidden="true">
-            <h4 class="bv-float-card__title">台灣製造</h4>
-            <p class="bv-float-card__sub">Made in Taiwan</p>
+          <div class="bv-card bv-card--gray">
+            <div class="bv-card__top">
+              <p class="bv-card__label">Industrial Quality</p>
+              <h3 class="bv-card__main">工業級品質</h3>
+            </div>
+            <div class="bv-card__num">02</div>
           </div>
 
-          <!-- Card 2: top-right -->
-          <div class="bv-float-card bv-float-card--2">
-            <img class="bv-float-card__icon" src="images/no-06.png" alt="" aria-hidden="true">
-            <h4 class="bv-float-card__title">工業級品質</h4>
-            <p class="bv-float-card__sub">Industrial Quality</p>
-          </div>
-
-          <!-- Card 3: bottom-right -->
-          <div class="bv-float-card bv-float-card--3">
-            <img class="bv-float-card__icon" src="images/no-09.png" alt="" aria-hidden="true">
-            <div class="bv-float-card__big">30<span>+</span></div>
-            <p class="bv-float-card__sub">Years Experience</p>
+          <div class="bv-card bv-card--dark">
+            <div class="bv-card__top">
+              <p class="bv-card__label">Years Experience</p>
+              <h3 class="bv-card__main">30年以上<br>專業經驗</h3>
+            </div>
+            <div class="bv-card__num">30+</div>
           </div>
 
         </div>
