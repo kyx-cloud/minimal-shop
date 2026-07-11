@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=8">
+  <link rel="stylesheet" href="style.css?v=9">
 </head>
 <body data-hero>
 
@@ -332,7 +332,8 @@
 
     <!-- ===== Brand Values (Lower, white) ===== -->
     <section class="bv-section">
-      <div class="container">
+      <span class="bv-bg-text" aria-hidden="true">CRAFT</span>
+      <div class="container bv-container">
 
         <!-- Section header -->
         <div class="bv-top">
@@ -343,41 +344,44 @@
           </div>
         </div>
 
-        <!-- Stacked glass cards -->
-        <div class="bv-stack">
+        <!-- Bento Grid -->
+        <div class="bv-bento">
 
-          <div class="bv-card bv-c1">
-            <div class="bv-card__body">
-              <h4>我們了解職人，<br>並以此驅動每一次決策</h4>
-              <p>深耕台灣縫紉市場多年，我們清楚每一位職人的需求，並將洞察轉化為更好的產品。</p>
+          <!-- Left: large brand card -->
+          <div class="bv-bento__main bv-card-new">
+            <img class="bv-card__img" src="images/no-07.png" alt="" aria-hidden="true">
+            <div class="bv-bento__main-content">
+              <p class="bv-card__eyebrow">Brand Philosophy</p>
+              <h3 class="bv-card__headline">Precision Begins<br>with Every Detail.</h3>
+              <p class="bv-card__body-text">深耕台灣縫紉市場多年，我們清楚每一位職人的需求，並將洞察轉化為更好的產品。</p>
             </div>
-            <span class="bv-card__num">001</span>
           </div>
 
-          <div class="bv-card bv-c2">
-            <div class="bv-card__body">
-              <h4>工業級品質保證</h4>
-              <p>精密加工製造，多道品質檢測程序，確保每件商品達到最高標準。</p>
-            </div>
-            <span class="bv-card__num">002</span>
-          </div>
+          <!-- Right: three feature cards -->
+          <div class="bv-bento__side">
 
-          <div class="bv-card bv-c3">
-            <div class="bv-card__body">
-              <h4>完全相容性<br>與使用彈性</h4>
-              <p>適配各式縫紉機型號，即插即用，無需額外設定。</p>
+            <div class="bv-bento__card bv-bento__card--1 bv-card-new">
+              <img class="bv-card__img bv-card__img--sm" src="images/no-05.png" alt="" aria-hidden="true">
+              <p class="bv-card__kicker">01</p>
+              <h4 class="bv-card__stat">台灣製造</h4>
+              <p class="bv-card__sub">Made in Taiwan</p>
             </div>
-            <span class="bv-card__num">003</span>
-          </div>
 
-          <div class="bv-card bv-c4">
-            <div class="bv-card__body">
-              <h4>台灣精選製造</h4>
-              <p>嚴格把關每一件商品的來源與品質，提供最值得信賴的工具。</p>
+            <div class="bv-bento__card bv-bento__card--2 bv-card-new">
+              <img class="bv-card__img bv-card__img--sm" src="images/no-06.png" alt="" aria-hidden="true">
+              <p class="bv-card__kicker">02</p>
+              <h4 class="bv-card__stat">工業級品質</h4>
+              <p class="bv-card__sub">Industrial Quality</p>
             </div>
-            <span class="bv-card__num">004</span>
-          </div>
 
+            <div class="bv-bento__card bv-bento__card--3 bv-card-new">
+              <img class="bv-card__img bv-card__img--sm" src="images/no-09.png" alt="" aria-hidden="true">
+              <p class="bv-card__kicker">03</p>
+              <div class="bv-card__stat-big">30<span>+</span></div>
+              <p class="bv-card__sub">Years Experience</p>
+            </div>
+
+          </div>
         </div>
       </div>
     </section>

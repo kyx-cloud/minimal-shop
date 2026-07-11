@@ -1497,55 +1497,24 @@ function initGSAPAnimations() {
     });
   }
 
-  /* ── bv-section: glass cards appear one by one, back→front ── */
-  const bvCards = [...document.querySelectorAll('.bv-card')];
-  if (bvCards.length) {
-    const isMobile = window.innerWidth < 769;
+  /* ── bv-section: bento cards sequential fade-up ── */
+  const bvBentoCards = [...document.querySelectorAll('.bv-card-new')];
+  if (bvBentoCards.length) {
+    gsap.from(bvBentoCards, {
+      opacity: 0, y: 52, filter: 'blur(4px)',
+      duration: 0.9, ease: 'power2.out',
+      stagger: 0.16,
+      scrollTrigger: { trigger: '.bv-bento', start: 'top 82%' },
+    });
 
-    if (!isMobile) {
-      /* Final stacked positions: c1=front(index 0), c4=back(index 3) */
-      const stackFinal = [
-        { rotation: 0,  x: 460,   y: 80  },
-        { rotation: 0, x: 190, y: 60  },
-        { rotation: 0,  x: -80,  y: 40 },
-        { rotation: 0, x: -350, y: 20 },
-      ];
-
-      /* Set initial state: each card at final x/rotation but 80px below */
-      bvCards.forEach((card, i) => {
-        gsap.set(card, {
-          opacity: 0,
-          y: stackFinal[i].y + 80,
-          x: stackFinal[i].x,
-          rotation: stackFinal[i].rotation,
-        });
+    /* Subtle float on card images */
+    document.querySelectorAll('.bv-card__img, .bv-card__img--sm').forEach((img, i) => {
+      gsap.to(img, {
+        y: -8, duration: 3.2 + i * 0.4,
+        ease: 'sine.inOut', yoyo: true, repeat: -1,
+        delay: -(i * 0.7),
       });
-
-      ScrollTrigger.create({
-        trigger: '.bv-stack',
-        start: 'top 75%',
-        onEnter() {
-          /* Back card (c4, index 3) appears first, front card (c1, index 0) last */
-          bvCards.forEach((card, i) => {
-            const delay = (bvCards.length - 1 - i) * 0.22;
-            gsap.to(card, {
-              opacity: 1,
-              y: stackFinal[i].y,
-              duration: 0.72,
-              delay,
-              ease: 'power2.out',
-            });
-          });
-        },
-      });
-    } else {
-      /* Mobile: simple stagger fade-in, no deck rotation */
-      gsap.from(bvCards, {
-        opacity: 0, y: 30,
-        duration: 0.65, stagger: 0.12, ease: 'power2.out',
-        scrollTrigger: { trigger: '.bv-stack', start: 'top 82%' },
-      });
-    }
+    });
   }
 
   /* ── News watermark float-up ── */
@@ -1595,7 +1564,7 @@ function initCSSAnimations() {
     '.stat', '.news-title', '.news-desc', '.newsletter__form',
     '.footer-brand', '.footer-col',
     '.brand-phil__img-col', '.brand-phil__text-col',
-    '.fp-headline-block', '.fp-ann', '.bv-card',
+    '.fp-headline-block', '.fp-ann', '.bv-card-new',
   ];
 
   revealSelectors.forEach(sel => {
