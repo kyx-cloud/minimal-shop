@@ -1848,10 +1848,11 @@ bottom: -3%;
     height: 1220px;
   }
   .fe-main-img {
-    height: auto;
+    height: 300px;
     min-height: unset;
     aspect-ratio: 4 / 3;
-    width: 100%;
+    width: 90%;
+    margin: 0 auto;
     filter: grayscale(20);
   }
   .fe-right {
@@ -1866,7 +1867,11 @@ bottom: -3%;
   .fe-thumbs {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: 1fr;
+    margin: 0 auto;
+   
+
   }
+ 
   .fe-hero-type {
     font-size: clamp(8rem, 36vw, 24rem);
     left: 0;   /* 單欄時靠左起始 */
@@ -2604,7 +2609,7 @@ margin-right: 200px;
   .fp-item img {
     width: 100% !important;
     height: 200% !important;
-    margin: 0 !important;
+    margin: 0 auto !important;
     padding-top: 0 !important;
   }
 

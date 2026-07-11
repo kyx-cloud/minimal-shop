@@ -831,10 +831,11 @@ function initFloatingProducts() {
       delay,
     });
 
+    const baseOpacity = parseFloat(el.dataset.baseOpacity ?? 0.9);
     el.addEventListener('mouseenter', () =>
-      gsap.to(el, { scale: 1.08, duration: 0.4, ease: 'power2.out' }));
+      gsap.to(el, { scale: 1.08, opacity: 1, duration: 0.35, ease: 'power2.out' }));
     el.addEventListener('mouseleave', () =>
-      gsap.to(el, { scale: 1,    duration: 0.4, ease: 'power2.out' }));
+      gsap.to(el, { scale: 1, opacity: baseOpacity, duration: 0.45, ease: 'power2.out' }));
   });
 }
 
@@ -1407,24 +1408,45 @@ function initGSAPAnimations() {
   /* ── fp-section: products stagger reveal → then start float ── */
   const fpItems = [...document.querySelectorAll('.fp-item')];
   if (fpItems.length) {
-    gsap.set(fpItems, { opacity: 0, y: 36, scale: 0.92 });
+    /* Depth config: 1=closest, 3=furthest */
+    const depthOpacity = { '1': 0.95, '2': 0.60, '3': 0.38 };
+    const depthInitScale = { '1': 0.94, '2': 0.90, '3': 0.86 };
+
+    fpItems.forEach(item => {
+      const d = item.dataset.depth ?? '2';
+      item.dataset.baseOpacity = depthOpacity[d] ?? 0.60;
+      gsap.set(item, { opacity: 0, y: 40, scale: depthInitScale[d] ?? 0.90 });
+    });
+
+    /* Sort far→near so background items appear first */
+    const sortedByDepth = [...fpItems].sort((a, b) =>
+      (parseInt(b.dataset.depth) || 2) - (parseInt(a.dataset.depth) || 2)
+    );
+
     let floatStarted = false;
     ScrollTrigger.create({
       trigger: '.fp-section',
       start: 'top 72%',
       onEnter() {
-        gsap.to(fpItems, {
-          opacity: 1, y: 0, scale: 1,
-          stagger: { each: 0.13, from: 'random' },
-          duration: 0.95, ease: 'power2.out',
-          onComplete() {
-            if (!floatStarted) { floatStarted = true; initFloatingProducts(); }
-          },
+        let completed = 0;
+        sortedByDepth.forEach((item, i) => {
+          const targetOpacity = parseFloat(item.dataset.baseOpacity);
+          gsap.to(item, {
+            opacity: targetOpacity, y: 0, scale: 1,
+            delay: i * 0.18,
+            duration: 1.0, ease: 'power2.out',
+            onComplete() {
+              completed++;
+              if (completed === sortedByDepth.length && !floatStarted) {
+                floatStarted = true;
+                initFloatingProducts();
+              }
+            },
+          });
         });
       },
     });
   } else {
-    /* fallback: start float immediately if no items */
     initFloatingProducts();
   }
 
