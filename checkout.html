@@ -164,9 +164,32 @@
     .btn--loading { pointer-events: none; opacity: 0.7; }
 
     @media (max-width: 900px) {
-      .checkout-layout { grid-template-columns: 1fr; }
-      .order-summary { position: static; order: -1; margin-bottom: 32px; }
+      .checkout-layout { grid-template-columns: 1fr; gap: 24px; }
+      .order-summary { position: static; order: -1; margin-bottom: 0; padding: 20px; }
       .form-grid-2 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 480px) {
+      .checkout-main { padding-bottom: 60px; }
+      .checkout-steps { margin: 24px 0 32px; gap: 0; }
+      .step { font-size: 10px; gap: 6px; }
+      .step__num { width: 20px; height: 20px; font-size: 10px; }
+      .step-divider { margin: 0 8px; }
+
+      .order-summary { padding: 16px; }
+      .order-summary__title { font-size: 12px; margin-bottom: 16px; }
+      .summary-item__img { width: 44px; height: 44px; }
+      .summary-item__name { font-size: 12px; }
+      .summary-row--total { font-size: 14px; }
+
+      .checkout-form-section { margin-bottom: 28px; }
+      .form-input { padding: 11px 12px; font-size: 16px; /* 防止 iOS 自動縮放 */ }
+      .payment-option { padding: 12px 14px; gap: 10px; }
+      .payment-option__name { font-size: 13px; }
+      .card-form { padding: 14px; }
+      .card-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+
+      .checkout-submit .btn--primary { padding: 16px; font-size: 14px; }
     }
   </style>
 </head>
