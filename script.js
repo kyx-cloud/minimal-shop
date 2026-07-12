@@ -331,6 +331,7 @@ function initHeader() {
   menuBtn?.addEventListener('click', () => {
     mobileMenu?.classList.contains('is-open') ? closeMenu() : openMenu();
   });
+  document.getElementById('menuClose')?.addEventListener('click', closeMenu);
   menuOverlay?.addEventListener('click', closeMenu);
 
   searchBtn?.addEventListener('click', () => {
