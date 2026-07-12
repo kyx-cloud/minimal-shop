@@ -1,7 +1,20 @@
 import { Router } from 'express';
+import { Low }    from 'lowdb';
+import { JSONFile } from 'lowdb/node';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
 import db, { nextId } from '../database.js';
 
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const udb = new Low(new JSONFile(join(__dirname, '../data/users.json')), { users: [] });
+await udb.read();
+
 const router = Router();
+
+function getUserFromToken(req) {
+  const t = (req.headers.authorization || '').replace('Bearer ', '').trim();
+  return t ? (udb.data.users.find(u => u.token === t) ?? null) : null;
+}
 
 function genOrderNumber() {
   const d = new Date().toISOString().slice(0,10).replace(/-/g,'');
@@ -17,6 +30,9 @@ router.post('/', async (req, res) => {
   if (!items?.length)
     return res.status(400).json({ success: false, message: '購物車是空的' });
 
+  await udb.read();
+  const memberUser = getUserFromToken(req);
+
   const subtotal     = items.reduce((s, i) => s + i.price * i.quantity, 0);
   const shipping_fee = subtotal >= 1000 ? 0 : 80;
   const total        = subtotal + shipping_fee;
@@ -25,6 +41,7 @@ router.post('/', async (req, res) => {
   const order = {
     id:               nextId('orders'),
     order_number:     genOrderNumber(),
+    user_id:          memberUser ? memberUser.id : null,
     customer_name:    customer.name,
     customer_email:   customer.email,
     customer_phone:   customer.phone,

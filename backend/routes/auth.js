@@ -146,13 +146,13 @@ router.post('/wishlist/toggle', async (req, res) => {
   res.json({ success: true, data: { wishlist: u.wishlist, added: idx === -1 } });
 });
 
-/* GET /api/auth/orders — 我的訂單（依 email 過濾） */
+/* GET /api/auth/orders — 我的訂單（優先 user_id，fallback email） */
 router.get('/orders', async (req, res) => {
   await udb.read();
   const u = authUser(req);
   if (!u) return res.json({ success: false, message: '未登入' });
   const myOrders = (db.data.orders || [])
-    .filter(o => o.customer_email === u.email)
+    .filter(o => (o.user_id && o.user_id === u.id) || (!o.user_id && o.customer_email === u.email))
     .sort((a, b) => (b.created_at || '').localeCompare(a.created_at || ''));
   res.json({ success: true, data: myOrders });
 });

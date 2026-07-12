@@ -344,6 +344,7 @@
   </main>
 
   <script src="script.js"></script>
+  <script src="auth.js"></script>
   <script>
     /* ── 結帳頁專屬邏輯 ── */
     const API_BASE = window.location.protocol === 'file:' ? 'http://localhost:3001' : '';
@@ -485,9 +486,10 @@
         });
 
         /* 4. 建立訂單 */
+        const authHeader = Auth.getToken() ? { Authorization: `Bearer ${Auth.getToken()}` } : {};
         const createRes = await fetch(`${API_BASE}/api/orders`, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: { 'Content-Type': 'application/json', ...authHeader },
           body: JSON.stringify({
             customer: {
               name:    document.getElementById('customerName').value.trim(),
@@ -528,6 +530,17 @@
     /* 初始化 */
     renderSummary();
     Cart.updateCountUI();
+
+    /* 自動填入已登入會員資料 */
+    (function prefillMember() {
+      const u = Auth.getUser();
+      if (!u) return;
+      const set = (id, val) => { if (val) document.getElementById(id).value = val; };
+      set('customerName',    u.name);
+      set('customerEmail',   u.email);
+      set('customerPhone',   u.phone);
+      set('customerAddress', u.address);
+    })();
   </script>
 </body>
 </html>
