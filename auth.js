@@ -5,7 +5,8 @@
 'use strict';
 
 const Auth = (function () {
-  const API  = location.protocol === 'file:' ? 'http://localhost:3001' : '';
+  const _local = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
+  const API  = _local ? 'http://localhost:3001' : 'https://buluo-shop-api.onrender.com';
   const TK   = 'buluo_token';
   const UK   = 'buluo_user';
 

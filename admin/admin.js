@@ -5,7 +5,8 @@
 'use strict';
 
 const ADMIN_TOKEN_KEY = 'buluo_admin_token';
-const API = '';   /* 相對路徑，由 Node server serve */
+const _local = location.hostname === 'localhost' || location.hostname === '127.0.0.1' || location.protocol === 'file:';
+const API = _local ? '' : 'https://buluo-shop-api.onrender.com';
 
 /* ── Auth ────────────────────────────────────────────────── */
 function getToken()  { return localStorage.getItem(ADMIN_TOKEN_KEY); }
